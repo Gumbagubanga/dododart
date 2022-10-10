@@ -1,89 +1,109 @@
 package net.quombat.dododart.shared.domain;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Arrays;
 
-@Getter
+import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
 public enum DartSegment {
+    MISS(0, 0),
 
-    SINGLE_01(1, false, false),
-    SINGLE_02(2, false, false),
-    SINGLE_03(3, false, false),
-    SINGLE_04(4, false, false),
-    SINGLE_05(5, false, false),
-    SINGLE_06(6, false, false),
-    SINGLE_07(7, false, false),
-    SINGLE_08(8, false, false),
-    SINGLE_09(9, false, false),
-    SINGLE_10(10, false, false),
-    SINGLE_11(11, false, false),
-    SINGLE_12(12, false, false),
-    SINGLE_13(13, false, false),
-    SINGLE_14(14, false, false),
-    SINGLE_15(15, false, false),
-    SINGLE_16(16, false, false),
-    SINGLE_17(17, false, false),
-    SINGLE_18(18, false, false),
-    SINGLE_19(19, false, false),
-    SINGLE_20(20, false, false),
-    SINGLE_BULL(25, false, false),
+    SINGLE_01(1, 1),
+    SINGLE_02(2, 1),
+    SINGLE_03(3, 1),
+    SINGLE_04(4, 1),
+    SINGLE_05(5, 1),
+    SINGLE_06(6, 1),
+    SINGLE_07(7, 1),
+    SINGLE_08(8, 1),
+    SINGLE_09(9, 1),
+    SINGLE_10(10, 1),
+    SINGLE_11(11, 1),
+    SINGLE_12(12, 1),
+    SINGLE_13(13, 1),
+    SINGLE_14(14, 1),
+    SINGLE_15(15, 1),
+    SINGLE_16(16, 1),
+    SINGLE_17(17, 1),
+    SINGLE_18(18, 1),
+    SINGLE_19(19, 1),
+    SINGLE_20(20, 1),
+    SINGLE_BULL(25, 1),
 
-    DOUBLE_01(2, true, false),
-    DOUBLE_02(4, true, false),
-    DOUBLE_03(6, true, false),
-    DOUBLE_04(8, true, false),
-    DOUBLE_05(10, true, false),
-    DOUBLE_06(12, true, false),
-    DOUBLE_07(14, true, false),
-    DOUBLE_08(16, true, false),
-    DOUBLE_09(18, true, false),
-    DOUBLE_10(20, true, false),
-    DOUBLE_11(22, true, false),
-    DOUBLE_12(24, true, false),
-    DOUBLE_13(26, true, false),
-    DOUBLE_14(28, true, false),
-    DOUBLE_15(30, true, false),
-    DOUBLE_16(32, true, false),
-    DOUBLE_17(34, true, false),
-    DOUBLE_18(36, true, false),
-    DOUBLE_19(38, true, false),
-    DOUBLE_20(40, true, false),
-    DOUBLE_BULL(50, true, false),
+    DOUBLE_01(1, 2),
+    DOUBLE_02(2, 2),
+    DOUBLE_03(3, 2),
+    DOUBLE_04(4, 2),
+    DOUBLE_05(5, 2),
+    DOUBLE_06(6, 2),
+    DOUBLE_07(7, 2),
+    DOUBLE_08(8, 2),
+    DOUBLE_09(9, 2),
+    DOUBLE_10(10, 2),
+    DOUBLE_11(11, 2),
+    DOUBLE_12(12, 2),
+    DOUBLE_13(13, 2),
+    DOUBLE_14(14, 2),
+    DOUBLE_15(15, 2),
+    DOUBLE_16(16, 2),
+    DOUBLE_17(17, 2),
+    DOUBLE_18(18, 2),
+    DOUBLE_19(19, 2),
+    DOUBLE_20(20, 2),
+    DOUBLE_BULL(25, 2),
 
-    TRIPLE_01(3, false, true),
-    TRIPLE_02(6, false, true),
-    TRIPLE_03(9, false, true),
-    TRIPLE_04(12, false, true),
-    TRIPLE_05(15, false, true),
-    TRIPLE_06(18, false, true),
-    TRIPLE_07(21, false, true),
-    TRIPLE_08(24, false, true),
-    TRIPLE_09(27, false, true),
-    TRIPLE_10(30, false, true),
-    TRIPLE_11(33, false, true),
-    TRIPLE_12(36, false, true),
-    TRIPLE_13(39, false, true),
-    TRIPLE_14(42, false, true),
-    TRIPLE_15(45, false, true),
-    TRIPLE_16(48, false, true),
-    TRIPLE_17(51, false, true),
-    TRIPLE_18(54, false, true),
-    TRIPLE_19(57, false, true),
-    TRIPLE_20(60, false, true),
+    TRIPLE_01(1, 3),
+    TRIPLE_02(2, 3),
+    TRIPLE_03(3, 3),
+    TRIPLE_04(4, 3),
+    TRIPLE_05(5, 3),
+    TRIPLE_06(6, 3),
+    TRIPLE_07(7, 3),
+    TRIPLE_08(8, 3),
+    TRIPLE_09(9, 3),
+    TRIPLE_10(10, 3),
+    TRIPLE_11(11, 3),
+    TRIPLE_12(12, 3),
+    TRIPLE_13(13, 3),
+    TRIPLE_14(14, 3),
+    TRIPLE_15(15, 3),
+    TRIPLE_16(16, 3),
+    TRIPLE_17(17, 3),
+    TRIPLE_18(18, 3),
+    TRIPLE_19(19, 3),
+    TRIPLE_20(20, 3),
     ;
 
     private final int score;
-    private final boolean aDouble;
-    private final boolean aTriple;
+    private final int multiplier;
 
     public static DartSegment from(int value) {
         int multiplier = value / 100;
-        int field = value % 100;
-        int score = multiplier * field;
+        int score = value % 100;
 
-        return Arrays.stream(values()).filter(s -> s.score == score).findFirst().orElseThrow();
+        return Arrays.stream(values())
+                .filter(s -> s.score == score && s.multiplier == multiplier)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    public int getScore() {
+        return score * multiplier;
+    }
+
+    @Override
+    public String toString() {
+        if (this == MISS) {
+            return "Miss";
+        } else if (this == SINGLE_BULL) {
+            return "Bull";
+        } else if (this == DOUBLE_BULL) {
+            return "DBull";
+        } else if (multiplier == 2) {
+            return "D" + score;
+        } else if (multiplier == 3) {
+            return "T" + score;
+        }
+        return "" + score;
     }
 }

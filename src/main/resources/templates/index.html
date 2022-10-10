@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" action="#" th:action="@{/startGame}">
+    <p>
+        Select Game Type:
+        <input id="gameType-fiveOhOne" type="radio" name="gameType" value="501" checked>
+        <label for="gameType-fiveOhOne">501</label>
+        </input>
+    </p>
+    <p>
+        <label for="noOfPlayers">Number of Players:</label>
+        <select id="noOfPlayers" name="numberOfPlayers">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+    </p>
+    <p>
+        <input type="submit" value="Start"/>
+    </p>
+</form>
+</body>
+</html>

@@ -1,13 +1,11 @@
 #include <ArduinoJson.h>
 
 // <PINS>
-// Piezo Input Pin
-#define VIBRATION_IN_PIN 29
-
-// Matrix Input Pins
-const int MATRIX_IN_PIN[16] = { 50, 51, 48, 49, 46, 47, 44, 45, 42, 43, 40, 41, 38, 39, 36, 37 };
-// Matrix Output Pins
-const int MATRIX_OUT_PIN[4] = { 52, 53, 34, 35 };
+#define BUTTON_IN_PIN 52
+#define BUTTON_LED_OUT_PIN 13
+#define VIBRATION_IN_PIN 23
+const int MATRIX_IN_PIN[16] = { 46, 44, 42, 40, 38, 36, 34, 32, 51, 49, 47, 45, 43, 41, 39, 37 };
+const int MATRIX_OUT_PIN[4] = { 50, 48, 35, 33 };
 
 // <VARIABLES>
 // Matrix Values
@@ -22,6 +20,7 @@ const int MATRIX_VALUES[4][16] = {
 
 int matrixValue = 0;
 bool miss = false;
+bool buttonPressed = false;
 
 int EvalThrow() {
   for (int x = 0; x < 4; x++) {
@@ -45,29 +44,33 @@ bool CheckMiss() {
   return (digitalRead(VIBRATION_IN_PIN) == HIGH);
 }
 
+bool CheckButton() {
+  return (digitalRead(BUTTON_IN_PIN) == LOW);
+}
 
 void processInput() {
   miss = CheckMiss();
+  buttonPressed = CheckButton();
   matrixValue = EvalThrow();
 }
 
 void render() {
-  if (miss || matrixValue != 0) {
+  if (buttonPressed || miss || matrixValue != 0) {
     StaticJsonDocument<100> doc;
 
     doc["dart"] = matrixValue;
-    doc["miss"] = miss;
+    doc["buttonPressed"] = buttonPressed;
 
     serializeJson(doc, Serial);
     Serial.println();
 
-    delay(300);
+    delay(500);
   }
 }
 
-/* Setup loop */
 void setup() {
-  // Piezo
+  pinMode(BUTTON_IN_PIN, INPUT_PULLUP);
+  pinMode(BUTTON_LED_OUT_PIN, OUTPUT);
   pinMode(VIBRATION_IN_PIN, INPUT);
 
   for (int i = 0; i < 16; i++) {
@@ -79,12 +82,13 @@ void setup() {
     pinMode(MATRIX_OUT_PIN[i], OUTPUT);
   }
 
+  digitalWrite(BUTTON_LED_OUT_PIN, LOW);
+
   // Start serial
   Serial.begin(9600);
   while (!Serial) continue;
 }
 
-/* Main loop */
 void loop() {
   processInput();
   render();

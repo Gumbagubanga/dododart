@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<div class="messages">
+    <div th:each="message : ${model.messages}">
+        <div th:text="${message}"></div>
+    </div>
+</div>
+<div class="gameMode" th:text="|Spiel: ${model.gameMode}|">501</div>
+<div class="round" th:text="|Runde: ${model.round}|">Runde: 1</div>
+<div class="currentPlayer" th:text="|SPIELER ${model.currentPlayer}|">SPIELER 1</div>
+<div class="statistics">
+    <div th:text="|PPD ${model.currentPointsPerDart}|">PPD</div>
+    <div th:text="|AVG ${model.currentPointsPerRound}|">AVG</div>
+</div>
+<div class="dart_one" th:text="|🎯 ${model.firstDart}|">🎯 T7</div>
+<div class="dart_two" th:text="|🎯 ${model.secondDart}|">🎯 T7</div>
+<div class="dart_three" th:text="|🎯 ${model.thirdDart}|">🎯 T7</div>
+<div class="currentDartSum" th:text="${model.dartsSum}">0</div>
+<div class="currentScore" th:text="${model.currentScore}">501</div>
+<div th:each="player : ${model.players}" th:remove="tag">
+    <div class="score p1" th:class="|score p${player.id}|">
+        <div class="playerName" th:text="|Spieler ${player.id}|">Spieler 1</div>
+        <div class="playerScore" th:text="${player.score}">501</div>
+    </div>
+</div>
+</body>
