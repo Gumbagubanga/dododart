@@ -85,7 +85,7 @@ body {
 }
 
 .currentScore {
-    grid-area: 3 / 2 / 7 / 4;
+    grid-area: 3 / 2 / 7 / 5;
     place-self: center;
     font-size: 24em;
     font-weight: bold;
