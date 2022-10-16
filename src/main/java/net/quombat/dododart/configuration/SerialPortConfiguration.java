@@ -6,11 +6,17 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
 
+import net.quombat.dododart.shared.domain.ButtonStartBlink;
+import net.quombat.dododart.shared.domain.ButtonStopBlink;
 import net.quombat.dododart.shared.domain.Dart;
 import net.quombat.dododart.shared.domain.DartSegment;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
+
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.PreDestroy;
 
@@ -77,5 +83,19 @@ class SerialPortConfiguration {
 
         });
         return comPort;
+    }
+
+    @EventListener
+    public void startButtonBlink(ButtonStartBlink button) {
+        var event = new PayloadApplicationEvent<>(this, button.getClass().getSimpleName());
+        byte[] bytes = gson.toJson(event).getBytes(StandardCharsets.UTF_8);
+        comPort.writeBytes(bytes, bytes.length);
+    }
+
+    @EventListener
+    public void stopButtonBlink(ButtonStopBlink button) {
+        var event = new PayloadApplicationEvent<>(this, button.getClass().getSimpleName());
+        byte[] bytes = gson.toJson(event).getBytes(StandardCharsets.UTF_8);
+        comPort.writeBytes(bytes, bytes.length);
     }
 }

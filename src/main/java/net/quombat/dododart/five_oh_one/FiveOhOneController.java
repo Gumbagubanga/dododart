@@ -1,6 +1,8 @@
 package net.quombat.dododart.five_oh_one;
 
 import net.quombat.dododart.configuration.ButtonPressed;
+import net.quombat.dododart.shared.domain.ButtonStartBlink;
+import net.quombat.dododart.shared.domain.ButtonStopBlink;
 import net.quombat.dododart.shared.domain.Dart;
 import net.quombat.dododart.shared.domain.DartSegment;
 import net.quombat.dododart.shared.domain.Game;
@@ -70,11 +72,8 @@ class FiveOhOneController {
     public void buttonPressed(ButtonPressed buttonPressed) {
         if (service.isEnabled()) {
             service.nextPlayer();
-            try {
-                sseEmitter.send("");
-            } catch (IOException e) {
-                log.error("", e);
-            }
+            notifyBrowser();
+            applicationEventPublisher.publishEvent(new ButtonStopBlink());
         }
     }
 
@@ -82,10 +81,9 @@ class FiveOhOneController {
     public void hit(Dart event) {
         if (service.isEnabled()) {
             service.hit(event);
-            try {
-                sseEmitter.send("");
-            } catch (IOException e) {
-                log.error("", e);
+            notifyBrowser();
+            if (service.isSwitchPlayerState()) {
+                applicationEventPublisher.publishEvent(new ButtonStartBlink());
             }
         }
     }
@@ -94,6 +92,14 @@ class FiveOhOneController {
     public void init(Game game) {
         if (!(game instanceof FiveOhOneGame)) {
             service.disable();
+        }
+    }
+
+    private void notifyBrowser() {
+        try {
+            sseEmitter.send("");
+        } catch (IOException e) {
+            log.error("", e);
         }
     }
 }

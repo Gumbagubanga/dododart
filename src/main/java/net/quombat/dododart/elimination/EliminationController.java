@@ -1,10 +1,13 @@
 package net.quombat.dododart.elimination;
 
 import net.quombat.dododart.configuration.ButtonPressed;
+import net.quombat.dododart.shared.domain.ButtonStartBlink;
+import net.quombat.dododart.shared.domain.ButtonStopBlink;
 import net.quombat.dododart.shared.domain.Dart;
 import net.quombat.dododart.shared.domain.DartSegment;
 import net.quombat.dododart.shared.domain.Game;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 class EliminationController {
 
     private final EliminationService service;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private SseEmitter sseEmitter;
 
@@ -32,7 +36,7 @@ class EliminationController {
     public String startGame(@PathVariable("noOfPlayers") int noOfPlayers, Model model) {
         service.init(noOfPlayers);
         model.addAttribute("model", EliminationGameModel.create(service));
-
+        applicationEventPublisher.publishEvent(new EliminationGame());
         return "elimination/elimination";
     }
 
@@ -69,6 +73,7 @@ class EliminationController {
         if (service.isEnabled()) {
             service.nextPlayer();
             notifyBrowser();
+            applicationEventPublisher.publishEvent(new ButtonStopBlink());
         }
     }
 
@@ -77,6 +82,9 @@ class EliminationController {
         if (service.isEnabled()) {
             service.hit(event);
             notifyBrowser();
+            if (service.isSwitchPlayerState()) {
+                applicationEventPublisher.publishEvent(new ButtonStartBlink());
+            }
         }
     }
 

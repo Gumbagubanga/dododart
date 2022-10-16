@@ -21,8 +21,12 @@ const int MATRIX_VALUES[4][16] = {
 int matrixValue = 0;
 bool miss = false;
 bool buttonPressed = false;
+bool buttonBlink = false;
+unsigned long previousMillis = 0;  // will store last time LED was updated
+int ledState = LOW;
+const long interval = 750;  // interval at which to blink (milliseconds)
 
-int EvalThrow() {
+int evaluateThrow() {
   for (int x = 0; x < 4; x++) {
     digitalWrite(MATRIX_OUT_PIN[0], HIGH);
     digitalWrite(MATRIX_OUT_PIN[1], HIGH);
@@ -40,18 +44,37 @@ int EvalThrow() {
   return 0;
 }
 
-bool CheckMiss() {
+bool checkMiss() {
   return (digitalRead(VIBRATION_IN_PIN) == HIGH);
 }
 
-bool CheckButton() {
+bool checkButton() {
   return (digitalRead(BUTTON_IN_PIN) == LOW);
 }
 
 void processInput() {
-  miss = CheckMiss();
-  buttonPressed = CheckButton();
-  matrixValue = EvalThrow();
+  buttonPressed = checkButton();
+  matrixValue = evaluateThrow();
+  miss = checkMiss();
+}
+
+void readSerial() {
+  if (Serial.available()) {
+    StaticJsonDocument<100> doc;
+    DeserializationError error = deserializeJson(doc, Serial);
+    if (error == DeserializationError::Ok) {
+      if (doc["payload"] == "ButtonStartBlink") {
+        buttonBlink = true;
+      } else if (doc["payload"] == "ButtonStopBlink") {
+        buttonBlink = false;
+      }
+    } else {
+      // Flush all bytes in the "link" serial port buffer
+      while (Serial.available() > 0) {
+        Serial.read();
+      }
+    }
+  }
 }
 
 void render() {
@@ -65,6 +88,26 @@ void render() {
     Serial.println();
 
     delay(500);
+  }
+}
+
+void update() {
+  if (buttonBlink) {
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval) {
+      // save the last time you blinked the LED
+      previousMillis = currentMillis;
+
+      // if the LED is off turn it on and vice-versa:
+      if (ledState == LOW) {
+        ledState = HIGH;
+      } else {
+        ledState = LOW;
+      }
+
+      // set the LED with the ledState of the variable:
+      digitalWrite(BUTTON_LED_OUT_PIN, ledState);
+    }
   }
 }
 
@@ -90,6 +133,8 @@ void setup() {
 }
 
 void loop() {
+  readSerial();
   processInput();
+  update();
   render();
 }
