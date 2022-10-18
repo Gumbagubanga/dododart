@@ -19,7 +19,8 @@
 <div class="currentDartSum" th:text="${model.dartsSum}">0</div>
 <div class="currentScore" th:text="${model.currentScore}">501</div>
 <div th:each="player : ${model.players}" th:remove="tag">
-    <div class="score p1" th:class="|score p${player.id}|">
+    <div class="score"
+         th:classappend="|p${player.id} ${player.id == model.currentPlayer ? 'active' : ''}|">
         <div class="playerName" th:text="|Spieler ${player.id}|">Spieler 1</div>
         <div class="playerScore" th:text="${player.score}">501</div>
     </div>

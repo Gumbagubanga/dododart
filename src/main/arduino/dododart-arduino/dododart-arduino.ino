@@ -24,7 +24,7 @@ bool buttonPressed = false;
 bool buttonBlink = false;
 unsigned long previousMillis = 0;  // will store last time LED was updated
 int ledState = LOW;
-const long interval = 750;  // interval at which to blink (milliseconds)
+const long interval = 500;  // interval at which to blink (milliseconds)
 
 int evaluateThrow() {
   for (int x = 0; x < 4; x++) {
@@ -108,6 +108,8 @@ void update() {
       // set the LED with the ledState of the variable:
       digitalWrite(BUTTON_LED_OUT_PIN, ledState);
     }
+  } else {
+    digitalWrite(BUTTON_LED_OUT_PIN, LOW);
   }
 }
 

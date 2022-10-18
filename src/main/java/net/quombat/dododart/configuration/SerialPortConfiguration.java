@@ -6,10 +6,11 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
 
-import net.quombat.dododart.shared.domain.ButtonStartBlink;
-import net.quombat.dododart.shared.domain.ButtonStopBlink;
-import net.quombat.dododart.shared.domain.Dart;
-import net.quombat.dododart.shared.domain.DartSegment;
+import net.quombat.dododart.x01.domain.ButtonPressedEvent;
+import net.quombat.dododart.x01.domain.ButtonStartBlink;
+import net.quombat.dododart.x01.domain.ButtonStopBlink;
+import net.quombat.dododart.x01.domain.DartHitEvent;
+import net.quombat.dododart.x01.domain.DartSegment;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.PayloadApplicationEvent;
@@ -20,20 +21,21 @@ import java.nio.charset.StandardCharsets;
 
 import javax.annotation.PreDestroy;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
 class SerialPortConfiguration {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
-    private final Gson gson;
+    private final Gson gson = new Gson();
+
+    private final ApplicationEventPublisher publisher;
     private final SerialPort comPort;
 
-    public SerialPortConfiguration(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
-        this.gson = new Gson();
-        this.comPort = initSerialPort();
+    public SerialPortConfiguration(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+        this.comPort = initSerialPort(0);
     }
 
     @PreDestroy
@@ -41,9 +43,9 @@ class SerialPortConfiguration {
         comPort.closePort();
     }
 
-    private SerialPort initSerialPort() {
+    private SerialPort initSerialPort(int port) {
         SerialPort[] commPorts = SerialPort.getCommPorts();
-        SerialPort comPort = commPorts[0];
+        SerialPort comPort = commPorts[port];
         comPort.openPort();
         comPort.addDataListener(new SerialPortMessageListener() {
             @Override
@@ -61,6 +63,7 @@ class SerialPortConfiguration {
                 return SerialPort.LISTENING_EVENT_DATA_RECEIVED;
             }
 
+            @SneakyThrows
             @Override
             public void serialEvent(SerialPortEvent event) {
                 String json = new String(event.getReceivedData());
@@ -69,18 +72,11 @@ class SerialPortConfiguration {
                 DartBoardDatagram boardDatagram = gson.fromJson(json, DartBoardDatagram.class);
 
                 if (boardDatagram.isButtonPressed()) {
-                    applicationEventPublisher.publishEvent(new ButtonPressed());
+                    publisher.publishEvent(new ButtonPressedEvent());
                 } else {
-                    Dart dart = new Dart(DartSegment.from(boardDatagram.getDart()));
-
-                    try {
-                        applicationEventPublisher.publishEvent(dart);
-                    } catch (RuntimeException e) {
-                        log.error("", e);
-                    }
+                    publisher.publishEvent(new DartHitEvent(DartSegment.from(boardDatagram.getDart())));
                 }
             }
-
         });
         return comPort;
     }

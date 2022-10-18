@@ -85,7 +85,7 @@ body {
 }
 
 .currentScore {
-    grid-area: 3 / 2 / 7 / 5;
+    grid-area: 3 / 1 / 7 / 5;
     place-self: center;
     font-size: 24em;
     font-weight: bold;
@@ -93,6 +93,11 @@ body {
 
 .score {
     padding: 12px;
+    border: 1px solid white;
+}
+
+.score.active {
+    border: 1px solid white;
 }
 
 .score .playerName {

@@ -1,4 +1,4 @@
-package net.quombat.dododart.shared.domain;
+package net.quombat.dododart.x01.domain;
 
 import java.util.Arrays;
 
@@ -104,6 +104,6 @@ public enum DartSegment {
         } else if (multiplier == 3) {
             return "T" + score;
         }
-        return "" + score;
+        return "S" + score;
     }
 }
