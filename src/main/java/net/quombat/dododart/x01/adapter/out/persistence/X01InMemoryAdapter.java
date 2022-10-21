@@ -1,8 +1,7 @@
-package net.quombat.dododart.x01.adapter.out;
+package net.quombat.dododart.x01.adapter.out.persistence;
 
 import net.quombat.dododart.x01.application.ports.out.X01PersistencePort;
 import net.quombat.dododart.x01.domain.X01Game;
-
 import org.springframework.stereotype.Component;
 
 @Component

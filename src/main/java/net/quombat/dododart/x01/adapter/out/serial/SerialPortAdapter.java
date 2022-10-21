@@ -1,51 +1,45 @@
-package net.quombat.dododart.configuration;
-
-import com.google.gson.Gson;
+package net.quombat.dododart.x01.adapter.out.serial;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
-
-import net.quombat.dododart.x01.domain.ButtonPressedEvent;
-import net.quombat.dododart.x01.domain.ButtonStartBlink;
-import net.quombat.dododart.x01.domain.ButtonStopBlink;
-import net.quombat.dododart.x01.domain.DartHitEvent;
-import net.quombat.dododart.x01.domain.DartSegment;
-
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.PayloadApplicationEvent;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
-
-import java.nio.charset.StandardCharsets;
-
-import javax.annotation.PreDestroy;
-
+import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.quombat.dododart.x01.application.ports.out.UartSendPort;
+import net.quombat.dododart.x01.domain.ButtonPressedEvent;
+import net.quombat.dododart.x01.domain.DartHitEvent;
+import net.quombat.dododart.x01.domain.DartSegment;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.PayloadApplicationEvent;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
-@Configuration
-class SerialPortConfiguration {
+@Component
+class SerialPortAdapter implements UartSendPort {
 
-    private final Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     private final ApplicationEventPublisher publisher;
-    private final SerialPort comPort;
+    private final SerialPort serialPort;
 
-    public SerialPortConfiguration(ApplicationEventPublisher publisher) {
+    public SerialPortAdapter(ApplicationEventPublisher publisher,
+                             @Value("${serialport.portDescriptor}") String portDescriptor) {
         this.publisher = publisher;
-        this.comPort = initSerialPort(0);
+        this.serialPort = initSerialPort(portDescriptor);
     }
 
     @PreDestroy
     void onDestroy() {
-        comPort.closePort();
+        serialPort.closePort();
     }
 
-    private SerialPort initSerialPort(int port) {
-        SerialPort[] commPorts = SerialPort.getCommPorts();
-        SerialPort comPort = commPorts[port];
+    private SerialPort initSerialPort(String portDescriptor) {
+        SerialPort comPort = SerialPort.getCommPort(portDescriptor);
         comPort.openPort();
         comPort.addDataListener(new SerialPortMessageListener() {
             @Override
@@ -81,17 +75,17 @@ class SerialPortConfiguration {
         return comPort;
     }
 
-    @EventListener
-    public void startButtonBlink(ButtonStartBlink button) {
-        var event = new PayloadApplicationEvent<>(this, button.getClass().getSimpleName());
+    @Override
+    public void startButtonBlink() {
+        PayloadApplicationEvent<String> event = new PayloadApplicationEvent<>(this, "ButtonStartBlink");
         byte[] bytes = gson.toJson(event).getBytes(StandardCharsets.UTF_8);
-        comPort.writeBytes(bytes, bytes.length);
+        serialPort.writeBytes(bytes, bytes.length);
     }
 
-    @EventListener
-    public void stopButtonBlink(ButtonStopBlink button) {
-        var event = new PayloadApplicationEvent<>(this, button.getClass().getSimpleName());
+    @Override
+    public void stopButtonBlink() {
+        PayloadApplicationEvent<String> event = new PayloadApplicationEvent<>(this, "ButtonStopBlink");
         byte[] bytes = gson.toJson(event).getBytes(StandardCharsets.UTF_8);
-        comPort.writeBytes(bytes, bytes.length);
+        serialPort.writeBytes(bytes, bytes.length);
     }
 }

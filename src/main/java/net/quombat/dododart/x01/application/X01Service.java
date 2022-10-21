@@ -1,27 +1,23 @@
 package net.quombat.dododart.x01.application;
 
+import lombok.RequiredArgsConstructor;
 import net.quombat.dododart.x01.application.ports.in.CreateNewGameX01Command;
 import net.quombat.dododart.x01.application.ports.in.X01UseCase;
+import net.quombat.dododart.x01.application.ports.out.UartSendPort;
 import net.quombat.dododart.x01.application.ports.out.X01PersistencePort;
 import net.quombat.dododart.x01.domain.ButtonPressedEvent;
-import net.quombat.dododart.x01.domain.ButtonStartBlink;
-import net.quombat.dododart.x01.domain.ButtonStopBlink;
 import net.quombat.dododart.x01.domain.DartHitEvent;
 import net.quombat.dododart.x01.domain.X01Game;
-
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 class X01Service implements X01UseCase {
 
     private final X01PersistencePort x01MemoryPort;
-    private final ApplicationEventPublisher publisher;
+    private final UartSendPort uartSendPort;
 
     @Override
     public X01Game createNewGame(CreateNewGameX01Command command) {
@@ -50,7 +46,7 @@ class X01Service implements X01UseCase {
 
         game.hit(event.segment());
         if (game.isSwitchPlayerState()) {
-            publisher.publishEvent(new ButtonStartBlink());
+            uartSendPort.startButtonBlink();
         }
     }
 
@@ -62,6 +58,6 @@ class X01Service implements X01UseCase {
         }
 
         game.nextPlayer();
-        publisher.publishEvent(new ButtonStopBlink());
+        uartSendPort.stopButtonBlink();
     }
 }

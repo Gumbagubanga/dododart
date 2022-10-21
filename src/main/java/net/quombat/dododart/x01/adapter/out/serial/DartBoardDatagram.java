@@ -1,4 +1,4 @@
-package net.quombat.dododart.configuration;
+package net.quombat.dododart.x01.adapter.out.serial;
 
 import lombok.Data;
 
