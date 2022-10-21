@@ -93,7 +93,6 @@ body {
 
 .score {
     padding: 12px;
-    border: 1px solid white;
 }
 
 .score.active {

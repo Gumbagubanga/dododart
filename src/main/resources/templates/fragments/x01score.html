@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <div class="messages">
-    <div th:each="message : ${model.messages}">
+    <div th:each="message : ${model.renderMessages}">
         <div th:text="${message}"></div>
     </div>
 </div>
