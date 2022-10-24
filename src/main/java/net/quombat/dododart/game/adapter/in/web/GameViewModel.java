@@ -3,13 +3,14 @@ package net.quombat.dododart.game.adapter.in.web;
 import net.quombat.dododart.game.domain.DartSegment;
 import net.quombat.dododart.game.domain.Game;
 import net.quombat.dododart.game.domain.Player;
+import net.quombat.dododart.game.domain.SplitScoreRules;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public record GameViewModel(String gameMode, String round, List<PlayerViewModel> players,
                             int currentPlayer,
-                            int currentScore, String currentPointsPerDart,
+                            String currentScore, String currentPointsPerDart,
                             String currentPointsPerRound, String firstDart, String secondDart,
                             String thirdDart, int dartsSum, List<String> renderMessages) {
 
@@ -18,15 +19,15 @@ public record GameViewModel(String gameMode, String round, List<PlayerViewModel>
 
         String gameMode = game.getRules().gameType();
         String round = round(game.getRound(), game.getMaxRounds());
-        List<PlayerViewModel> players = players(game.getPlayers(), currentPlayer);
+        List<PlayerViewModel> players = players(game);
         int currentPlayerId = currentPlayer.getId();
-        int currentPlayerScore = currentPlayer.currentScore();
-        String currentPointsPerDart = "%.1f".formatted(currentPlayer.getPointsPerDart());
-        String currentPointsPerRound = "%.1f".formatted(currentPlayer.getPointsPerRound());
-        String firstDart = currentPlayer.firstDart().map(GameViewModel::renderSegment).orElse("");
-        String secondDart = currentPlayer.secondDart().map(GameViewModel::renderSegment).orElse("");
-        String thirdDart = currentPlayer.thirdDart().map(GameViewModel::renderSegment).orElse("");
-        int dartsSum = currentPlayer.dartsSum();
+        String currentPlayerScore = getCurrentPlayerScore(game);
+        String currentPointsPerDart = "%.1f".formatted(currentPlayer.getStatistics().getPointsPerDart());
+        String currentPointsPerRound = "%.1f".formatted(currentPlayer.getStatistics().getPointsPerRound());
+        String firstDart = game.firstDart().map(GameViewModel::renderSegment).orElse("");
+        String secondDart = game.secondDart().map(GameViewModel::renderSegment).orElse("");
+        String thirdDart = game.thirdDart().map(GameViewModel::renderSegment).orElse("");
+        int dartsSum = game.dartsSum();
         List<String> messages = renderMessages(game);
 
         return new GameViewModel(gameMode, round, players, currentPlayerId,
@@ -34,6 +35,24 @@ public record GameViewModel(String gameMode, String round, List<PlayerViewModel>
                 firstDart, secondDart, thirdDart, dartsSum, messages);
     }
 
+    private static String getCurrentPlayerScore(Game game) {
+        if (game.getRules() instanceof SplitScoreRules) {
+            return switch (game.getRound()) {
+                case 1 -> "Nächstes Ziel: 15";
+                case 2 -> "Nächstes Ziel: 16";
+                case 3 -> "Nächstes Ziel: Double";
+                case 4 -> "Nächstes Ziel: 17";
+                case 5 -> "Nächstes Ziel: 18";
+                case 6 -> "Nächstes Ziel: Triple";
+                case 7 -> "Nächstes Ziel: 19";
+                case 8 -> "Nächstes Ziel: 20";
+                case 9 -> "Nächstes Ziel: Bull";
+                default -> throw new IllegalStateException("Unexpected value: " + game.getRound());
+            };
+        } else {
+            return "" + game.determineCurrentPlayer().getScore();
+        }
+    }
 
     private static String round(int round, int maxRounds) {
         if (maxRounds > 0) {
@@ -47,32 +66,24 @@ public record GameViewModel(String gameMode, String round, List<PlayerViewModel>
         return "%d (%s)".formatted(segment.getScore(), segment.toString());
     }
 
-    static List<PlayerViewModel> players(List<Player> players, Player currentPlayer) {
-        int currentPlayerScore = currentPlayer.currentScore();
-        return players.stream()
-                .map(p -> getPlayer(currentPlayerScore, p, currentPlayer.getId()))
+    static List<PlayerViewModel> players(Game game) {
+        return game.getPlayers().stream()
+                .map(p -> new PlayerViewModel(p.getId(), p.getScore()))
                 .toList();
     }
 
-    private static PlayerViewModel getPlayer(int currentPlayerScore, Player player, int currentPlayerId) {
-        int id = player.getId();
-        int score = (id == currentPlayerId) ? currentPlayerScore : player.currentScore();
-        return new PlayerViewModel(id, score);
-    }
-
     private static List<String> renderMessages(Game game) {
-        Player currentPlayer = game.determineCurrentPlayer();
         List<String> messages = new ArrayList<>();
 
         if (game.isGameOver()) {
             Player winner = game.determineWinner();
             messages.add("GEWINNER");
             messages.add("SPIELER %d".formatted(winner.getId()));
-        } else if (currentPlayer.isBust()) {
+        } else if (game.isBust()) {
             messages.add("Überworfen!");
             messages.add("Nächster Spieler");
             messages.add("Drücken Sie die Taste um fortzufahren");
-        } else if (currentPlayer.isTurnOver()) {
+        } else if (game.isTurnOver()) {
             messages.add("Nächster Spieler");
             messages.add("Drücken Sie die Taste um fortzufahren");
         }

@@ -1,24 +1,16 @@
 package net.quombat.dododart.game.domain;
 
-import java.util.List;
-
 public interface Rules {
-
-    default Player createPlayer(int playerNo) {
-        return new Player(playerNo, this);
-    }
 
     String gameType();
 
-    boolean isBust(Player player);
+    boolean isBust(Game game);
 
-    boolean isWinner(Player player);
+    boolean isWinner(Game game);
 
-    int calculatePreliminaryScore(Player player);
-
-    void hit(int round, DartSegment segment, Player currentPlayer, List<Player> players);
+    int calculateScore(Game game);
 
     int startScore();
 
-    Player leader(List<Player> players);
+    Player leader(Game game);
 }

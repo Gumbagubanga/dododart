@@ -106,6 +106,30 @@ public enum DartSegment {
                 .orElseThrow();
     }
 
+    static Set<DartSegment> twenties() {
+        return Set.of(SINGLE_20, DOUBLE_20, TRIPLE_20);
+    }
+
+    static Set<DartSegment> nineteens() {
+        return Set.of(SINGLE_19, DOUBLE_19, TRIPLE_19);
+    }
+
+    static Set<DartSegment> eighteens() {
+        return Set.of(SINGLE_18, DOUBLE_18, TRIPLE_18);
+    }
+
+    static Set<DartSegment> seventeens() {
+        return Set.of(SINGLE_17, DOUBLE_17, TRIPLE_17);
+    }
+
+    static Set<DartSegment> sixteens() {
+        return Set.of(SINGLE_16, DOUBLE_16, TRIPLE_16);
+    }
+
+    static Set<DartSegment> fiveteens() {
+        return Set.of(SINGLE_15, DOUBLE_15, TRIPLE_15);
+    }
+
     public int getScore() {
         return score * multiplier;
     }

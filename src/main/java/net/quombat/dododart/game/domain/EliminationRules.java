@@ -1,7 +1,6 @@
 package net.quombat.dododart.game.domain;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.function.Predicate;
 
 public record EliminationRules(int startScore, int targetScore) implements Rules {
@@ -12,32 +11,31 @@ public record EliminationRules(int startScore, int targetScore) implements Rules
     }
 
     @Override
-    public boolean isBust(Player player) {
-        return player.preliminaryScore() > targetScore;
+    public boolean isBust(Game game) {
+        return calculateScore(game) > targetScore;
     }
 
     @Override
-    public boolean isWinner(Player player) {
-        return player.preliminaryScore() == targetScore;
+    public boolean isWinner(Game game) {
+        return calculateScore(game) == targetScore;
     }
 
     @Override
-    public int calculatePreliminaryScore(Player player) {
-        return player.getScore() + player.dartsSum();
-    }
+    public int calculateScore(Game game) {
+        Player currentPlayer = game.determineCurrentPlayer();
+        int preliminaryScore = game.getCurrentScore() + game.dartsSum();
 
-    @Override
-    public void hit(int round, DartSegment segment, Player currentPlayer, List<Player> players) {
-        currentPlayer.hit(round, segment);
-        players.stream()
+        game.getPlayers().stream()
                 .filter(Predicate.not(currentPlayer::equals))
-                .filter(p -> p.currentScore() != 0)
-                .filter(p -> p.currentScore() == currentPlayer.currentScore())
-                .forEach(player -> player.resetScore());
+                .filter(p -> p.getScore() != 0)
+                .filter(p -> p.getScore() == preliminaryScore)
+                .forEach(player -> player.updateScore(0));
+
+        return preliminaryScore;
     }
 
     @Override
-    public Player leader(List<Player> players) {
-        return players.stream().max(Comparator.comparing(Player::currentScore)).orElseThrow();
+    public Player leader(Game game) {
+        return game.getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
     }
 }

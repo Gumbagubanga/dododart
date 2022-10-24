@@ -1,35 +1,37 @@
 package net.quombat.dododart.game.domain;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
+@Getter
 public class Game {
-    @Getter
-    private final Rules rules;
-    @Getter
-    private final List<Player> players;
-    @Getter
-    private final int maxRounds;
     @Getter(value = AccessLevel.NONE)
+    private final List<DartSegment> hits;
+    private final Rules rules;
+    private final List<Player> players;
+    private final int maxRounds;
     private int currentPlayerId;
-    @Getter
     private int round;
-    @Getter
     private GameState state;
+    private int currentScore;
 
     public Game(Rules rules, int noOfPlayers, int maxRounds) {
         this.rules = rules;
         this.players = IntStream.rangeClosed(1, noOfPlayers).boxed()
-                .map(rules::createPlayer)
+                .map(playerNo -> new Player(playerNo, rules.startScore()))
                 .collect(Collectors.toList());
         this.maxRounds = maxRounds;
         this.currentPlayerId = 1;
         this.round = 1;
         this.state = GameState.In_Game;
+        this.hits = new ArrayList<>();
+        this.currentScore = rules.startScore();
     }
 
     public void hit(DartSegment segment) {
@@ -38,9 +40,18 @@ public class Game {
         }
 
         Player currentPlayer = determineCurrentPlayer();
-        rules.hit(round, segment, currentPlayer, players);
+        currentPlayer.hit(round, segment);
+        hits.add(segment);
 
-        if (currentPlayer.isBust() || currentPlayer.isTurnOver()) {
+        int preliminaryScore = rules.calculateScore(this);
+
+        if (isBust()) {
+            currentPlayer.updateScore(currentScore);
+        } else {
+            currentPlayer.updateScore(preliminaryScore);
+        }
+
+        if (isBust() || isTurnOver()) {
             state = GameState.Switch_Player;
         }
 
@@ -56,7 +67,10 @@ public class Game {
         }
 
         Player currentPlayer = determineCurrentPlayer();
-        currentPlayer.updateScore();
+        if (state == GameState.In_Game) {
+            IntStream.range(0, 3 - hits.size()).forEach(i -> hits.add(DartSegment.MISS));
+            currentPlayer.updateScore(rules.calculateScore(this));
+        }
 
         int nextPlayerId = determineNextPlayer();
 
@@ -68,7 +82,9 @@ public class Game {
                 round++;
             }
             currentPlayerId = nextPlayerId;
+            currentScore = determineCurrentPlayer().getScore();
             state = GameState.In_Game;
+            hits.clear();
         }
     }
 
@@ -82,10 +98,10 @@ public class Game {
 
     public Player determineWinner() {
         Player currentPlayer = determineCurrentPlayer();
-        if (currentPlayer.isWinner()) {
+        if (isWinner()) {
             return currentPlayer;
         } else {
-            return rules.leader(players);
+            return rules.leader(this);
         }
     }
 
@@ -94,7 +110,7 @@ public class Game {
         Player lastPlayer = players.get(players.size() - 1);
         boolean last = currentPlayer.equals(lastPlayer);
 
-        return currentPlayer.isWinner() || (round == maxRounds && last && currentPlayer.isTurnOver());
+        return isWinner() || (round == maxRounds && last && isTurnOver());
     }
 
     private int determineNextPlayer() {
@@ -104,4 +120,37 @@ public class Game {
         }
         return i;
     }
+
+    public boolean isTurnOver() {
+        return hits.size() == 3;
+    }
+
+    public Optional<DartSegment> firstDart() {
+        return dartThrow(1);
+    }
+
+    public Optional<DartSegment> secondDart() {
+        return dartThrow(2);
+    }
+
+    public Optional<DartSegment> thirdDart() {
+        return dartThrow(3);
+    }
+
+    public int dartsSum() {
+        return hits.stream().map(DartSegment::getScore).reduce(0, Integer::sum);
+    }
+
+    public Optional<DartSegment> dartThrow(int throwNo) {
+        return hits.stream().skip(throwNo - 1).limit(1).findFirst();
+    }
+
+    public boolean isBust() {
+        return rules.isBust(this);
+    }
+
+    public boolean isWinner() {
+        return rules.isWinner(this);
+    }
+
 }

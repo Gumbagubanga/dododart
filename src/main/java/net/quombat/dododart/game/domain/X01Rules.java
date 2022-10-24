@@ -1,7 +1,6 @@
 package net.quombat.dododart.game.domain;
 
 import java.util.Comparator;
-import java.util.List;
 
 public record X01Rules(int startScore, int targetScore) implements Rules {
 
@@ -11,27 +10,22 @@ public record X01Rules(int startScore, int targetScore) implements Rules {
     }
 
     @Override
-    public boolean isBust(Player player) {
-        return player.preliminaryScore() < targetScore;
+    public boolean isBust(Game game) {
+        return calculateScore(game) < targetScore;
     }
 
     @Override
-    public boolean isWinner(Player player) {
-        return player.preliminaryScore() == targetScore;
+    public boolean isWinner(Game game) {
+        return calculateScore(game) == targetScore;
     }
 
     @Override
-    public int calculatePreliminaryScore(Player player) {
-        return player.getScore() - player.dartsSum();
+    public int calculateScore(Game game) {
+        return game.getCurrentScore() - game.dartsSum();
     }
 
     @Override
-    public void hit(int round, DartSegment segment, Player currentPlayer, List<Player> players) {
-        currentPlayer.hit(round, segment);
-    }
-
-    @Override
-    public Player leader(List<Player> players) {
-        return players.stream().min(Comparator.comparing(Player::currentScore)).orElseThrow();
+    public Player leader(Game game) {
+        return game.getPlayers().stream().min(Comparator.comparing(Player::getScore)).orElseThrow();
     }
 }
