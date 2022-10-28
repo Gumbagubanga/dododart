@@ -6,12 +6,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public record SplitScoreRules(int startScore, int maxRounds) implements Rules {
+public record SplitScoreRules(int startScore) implements Rules {
 
     private static final List<Set<DartSegment>> hitOrder = List.of(
-            DartSegment.fiveteens(), DartSegment.sixteens(), DartSegment.doubles(),
-            DartSegment.seventeens(), DartSegment.eighteens(), DartSegment.triples(),
-            DartSegment.nineteens(), DartSegment.twenties(), DartSegment.bulls()
+            DartSegment.fifteens, DartSegment.sixteens, DartSegment.doubles,
+            DartSegment.seventeens, DartSegment.eighteens, DartSegment.triples,
+            DartSegment.nineteens, DartSegment.twenties, DartSegment.bulls
     );
 
     @Override
@@ -57,6 +57,11 @@ public record SplitScoreRules(int startScore, int maxRounds) implements Rules {
     @Override
     public Player leader(Game game) {
         return game.getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
+    }
+
+    @Override
+    public int maxRounds() {
+        return hitOrder.size();
     }
 
 }
