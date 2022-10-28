@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -35,10 +34,10 @@ class GameController {
 
     @GetMapping("/{gameType}/{noOfPlayers}")
     public ModelAndView createNewGame(@PathVariable String gameType,
-                                      @PathVariable int noOfPlayers,
-                                      @RequestParam(defaultValue = "-1") int rounds) {
+                                      @PathVariable int noOfPlayers) {
         Rules rules = GameType.valueOf(gameType).getRules();
-        CreateNewGameCommand command = new CreateNewGameCommand(noOfPlayers, rules, rounds);
+
+        CreateNewGameCommand command = new CreateNewGameCommand(noOfPlayers, rules);
         Game game = gameUseCase.createNewGame(command);
 
         GameViewModel viewModel = GameViewModel.create(game);

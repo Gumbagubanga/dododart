@@ -25,9 +25,8 @@ class GameService implements GameUseCase {
     public Game createNewGame(CreateNewGameCommand command) {
         int noOfPlayers = command.noOfPlayers();
         Rules rules = command.rules();
-        int maxRounds = command.maxRounds();
 
-        Game game = new Game(rules, noOfPlayers, maxRounds);
+        Game game = new Game(noOfPlayers, rules);
         persistencePort.save(game);
 
         return game;

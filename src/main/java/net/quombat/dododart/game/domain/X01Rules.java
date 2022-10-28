@@ -2,7 +2,7 @@ package net.quombat.dododart.game.domain;
 
 import java.util.Comparator;
 
-public record X01Rules(int startScore, int targetScore) implements Rules {
+public record X01Rules(int startScore, int targetScore, int maxRounds) implements Rules {
 
     @Override
     public String gameType() {

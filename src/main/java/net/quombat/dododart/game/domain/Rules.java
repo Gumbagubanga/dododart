@@ -13,4 +13,6 @@ public interface Rules {
     int startScore();
 
     Player leader(Game game);
+
+    int maxRounds();
 }

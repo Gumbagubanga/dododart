@@ -3,7 +3,7 @@ package net.quombat.dododart.game.domain;
 import java.util.Comparator;
 import java.util.function.Predicate;
 
-public record EliminationRules(int startScore, int targetScore) implements Rules {
+public record EliminationRules(int startScore, int targetScore, int maxRounds) implements Rules {
 
     @Override
     public String gameType() {

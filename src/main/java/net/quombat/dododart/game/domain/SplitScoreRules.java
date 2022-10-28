@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public record SplitScoreRules(int startScore) implements Rules {
+public record SplitScoreRules(int startScore, int maxRounds) implements Rules {
 
     private static final List<Set<DartSegment>> hitOrder = List.of(
             DartSegment.fiveteens(), DartSegment.sixteens(), DartSegment.doubles(),

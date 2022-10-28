@@ -21,12 +21,12 @@ public class Game {
     private GameState state;
     private int currentScore;
 
-    public Game(Rules rules, int noOfPlayers, int maxRounds) {
+    public Game(int noOfPlayers, Rules rules) {
         this.rules = rules;
         this.players = IntStream.rangeClosed(1, noOfPlayers).boxed()
                 .map(playerNo -> new Player(playerNo, rules.startScore()))
                 .collect(Collectors.toList());
-        this.maxRounds = maxRounds;
+        this.maxRounds = rules.maxRounds();
         this.currentPlayerId = 1;
         this.round = 1;
         this.state = GameState.In_Game;

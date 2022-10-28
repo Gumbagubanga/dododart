@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum GameType {
-    ELIMINATION(new EliminationRules(0, 301)),
-    FIVE_OH_ONE(new X01Rules(501, 0)),
-    SPLIT_SCORE(new SplitScoreRules(40)),
+    ELIMINATION(new EliminationRules(0, 301, 10)),
+    FIVE_OH_ONE(new X01Rules(501, 0, -1)),
+    SPLIT_SCORE(new SplitScoreRules(40, 9)),
     ;
 
     private final Rules rules;
