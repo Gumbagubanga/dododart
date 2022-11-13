@@ -22,19 +22,12 @@ class GameService implements GameUseCase {
     private final UartSendPort uartSendPort;
 
     @Override
-    public Game createNewGame(CreateNewGameCommand command) {
+    public void createNewGame(CreateNewGameCommand command) {
         int noOfPlayers = command.noOfPlayers();
         Rules rules = command.rules();
 
         Game game = new Game(noOfPlayers, rules);
         persistencePort.save(game);
-
-        return game;
-    }
-
-    @Override
-    public Game fetchGame() {
-        return persistencePort.fetch();
     }
 
     @Override

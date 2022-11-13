@@ -5,7 +5,6 @@ import net.quombat.dododart.game.application.ports.in.GameUseCase;
 import net.quombat.dododart.game.domain.ButtonPressedEvent;
 import net.quombat.dododart.game.domain.DartHitEvent;
 import net.quombat.dododart.game.domain.DartSegment;
-import net.quombat.dododart.game.domain.Game;
 import net.quombat.dododart.game.domain.Rules;
 
 import org.springframework.context.event.EventListener;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -33,22 +31,13 @@ class GameController {
     private SseEmitter sseEmitter;
 
     @GetMapping("/{gameType}/{noOfPlayers}")
-    public ModelAndView createNewGame(@PathVariable String gameType,
-                                      @PathVariable int noOfPlayers) {
+    public String createNewGame(@PathVariable String gameType, @PathVariable int noOfPlayers) {
         Rules rules = GameType.valueOf(gameType).getRules();
 
         CreateNewGameCommand command = new CreateNewGameCommand(noOfPlayers, rules);
-        Game game = gameUseCase.createNewGame(command);
+        gameUseCase.createNewGame(command);
 
-        GameViewModel viewModel = GameViewModel.create(game);
-        return new ModelAndView("x01", "model", viewModel);
-    }
-
-    @GetMapping("/score")
-    public ModelAndView score() {
-        Game game = gameUseCase.fetchGame();
-        GameViewModel viewModel = GameViewModel.create(game);
-        return new ModelAndView("fragments/x01score", "model", viewModel);
+        return "x01";
     }
 
     @GetMapping("/register")
@@ -58,6 +47,8 @@ class GameController {
         sseEmitter.onTimeout(() -> log.info("SseEmitter is timed out"));
         sseEmitter.onError((ex) -> log.info("SseEmitter got error:", ex));
         this.sseEmitter = sseEmitter;
+
+        update();
         return this.sseEmitter;
     }
 
