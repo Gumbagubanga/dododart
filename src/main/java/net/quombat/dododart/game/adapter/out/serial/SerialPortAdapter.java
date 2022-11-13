@@ -6,7 +6,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
 
-import net.quombat.dododart.game.application.ports.out.UartSendPort;
+import net.quombat.dododart.game.application.ports.out.BoardPort;
 import net.quombat.dododart.game.domain.ButtonPressedEvent;
 import net.quombat.dododart.game.domain.DartHitEvent;
 import net.quombat.dododart.game.domain.DartSegment;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-class SerialPortAdapter implements UartSendPort {
+class SerialPortAdapter implements BoardPort {
 
     private static final Gson gson = new Gson();
 

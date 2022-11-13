@@ -21,7 +21,7 @@ public record X01Rules(int startScore, int targetScore, int maxRounds) implement
 
     @Override
     public int calculateScore(Game game) {
-        return game.getCurrentScore() - game.dartsSum();
+        return game.getCurrentPlayerOldScore() - game.dartsSum();
     }
 
     @Override

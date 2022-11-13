@@ -42,7 +42,7 @@ public record SplitScoreRules(int startScore) implements Rules {
                 .map(DartSegment::getScore)
                 .reduce(0, Integer::sum);
 
-        int score = game.getCurrentScore();
+        int score = game.getCurrentPlayerOldScore();
         if (game.isTurnOver()) {
             if (sum == 0) {
                 return score / 2;

@@ -1,6 +1,7 @@
 package net.quombat.dododart.game.adapter.in.web;
 
 import net.quombat.dododart.game.application.ports.in.RenderUseCase;
+import net.quombat.dododart.game.domain.CricketRules;
 import net.quombat.dododart.game.domain.DartSegment;
 import net.quombat.dododart.game.domain.Game;
 import net.quombat.dododart.game.domain.Player;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +77,24 @@ class RenderController {
                     default ->
                             throw new IllegalStateException("Unexpected value: " + game.getRound());
                 };
+            } else if (game.getRules() instanceof CricketRules) {
+                List<Integer> integers = DartSegment.highs.stream()
+                        .map(DartSegment::getPoints)
+                        .distinct()
+                        .sorted(Comparator.reverseOrder())
+                        .toList();
+                String header = integers.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(" | ", "", "<br>"));
+
+                StringBuilder result = new StringBuilder(header);
+                for (Player player : game.getPlayers()) {
+                    String collect = integers.stream()
+                            .map(p -> "%02d".formatted(Math.min(3, player.getStatistics().getHitDistributionPerSlice().getOrDefault(p, 0))))
+                            .collect(Collectors.joining(" | ", "", "<br>"));
+                    result.append(collect);
+                }
+                return result.toString();
             } else {
                 return "" + game.determineCurrentPlayer().getScore();
             }

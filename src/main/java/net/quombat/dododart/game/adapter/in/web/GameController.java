@@ -3,9 +3,13 @@ package net.quombat.dododart.game.adapter.in.web;
 import net.quombat.dododart.game.application.ports.in.CreateNewGameCommand;
 import net.quombat.dododart.game.application.ports.in.GameUseCase;
 import net.quombat.dododart.game.domain.ButtonPressedEvent;
+import net.quombat.dododart.game.domain.CricketRules;
 import net.quombat.dododart.game.domain.DartHitEvent;
 import net.quombat.dododart.game.domain.DartSegment;
+import net.quombat.dododart.game.domain.EliminationRules;
 import net.quombat.dododart.game.domain.Rules;
+import net.quombat.dododart.game.domain.SplitScoreRules;
+import net.quombat.dododart.game.domain.X01Rules;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
@@ -30,9 +34,39 @@ class GameController {
 
     private SseEmitter sseEmitter;
 
-    @GetMapping("/{gameType}/{noOfPlayers}")
-    public String createNewGame(@PathVariable String gameType, @PathVariable int noOfPlayers) {
-        Rules rules = GameType.valueOf(gameType).getRules();
+    @GetMapping("/ELIMINATION/{noOfPlayers}")
+    public String createNewEliminationGame(@PathVariable int noOfPlayers) {
+        Rules rules = new EliminationRules(0, 301, 10);
+
+        CreateNewGameCommand command = new CreateNewGameCommand(noOfPlayers, rules);
+        gameUseCase.createNewGame(command);
+
+        return "x01";
+    }
+
+    @GetMapping("/FIVE_OH_ONE/{noOfPlayers}")
+    public String createNewFiveOhOneGame(@PathVariable int noOfPlayers) {
+        Rules rules = new X01Rules(501, 0, -1);
+
+        CreateNewGameCommand command = new CreateNewGameCommand(noOfPlayers, rules);
+        gameUseCase.createNewGame(command);
+
+        return "x01";
+    }
+
+    @GetMapping("/SPLIT_SCORE/{noOfPlayers}")
+    public String createNewSplitScoreGame(@PathVariable int noOfPlayers) {
+        Rules rules = new SplitScoreRules(40);
+
+        CreateNewGameCommand command = new CreateNewGameCommand(noOfPlayers, rules);
+        gameUseCase.createNewGame(command);
+
+        return "x01";
+    }
+
+    @GetMapping("/CRICKET/{noOfPlayers}")
+    public String createNewCricketGame(@PathVariable int noOfPlayers) {
+        Rules rules = new CricketRules(0);
 
         CreateNewGameCommand command = new CreateNewGameCommand(noOfPlayers, rules);
         gameUseCase.createNewGame(command);

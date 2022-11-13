@@ -2,12 +2,11 @@ package net.quombat.dododart.game.application;
 
 import net.quombat.dododart.game.application.ports.in.CreateNewGameCommand;
 import net.quombat.dododart.game.application.ports.in.GameUseCase;
+import net.quombat.dododart.game.application.ports.out.BoardPort;
 import net.quombat.dododart.game.application.ports.out.GamePersistencePort;
-import net.quombat.dododart.game.application.ports.out.UartSendPort;
 import net.quombat.dododart.game.domain.ButtonPressedEvent;
 import net.quombat.dododart.game.domain.DartHitEvent;
 import net.quombat.dododart.game.domain.Game;
-import net.quombat.dododart.game.domain.GameState;
 import net.quombat.dododart.game.domain.Rules;
 
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 class GameService implements GameUseCase {
 
     private final GamePersistencePort persistencePort;
-    private final UartSendPort uartSendPort;
+    private final BoardPort boardPort;
 
     @Override
     public void createNewGame(CreateNewGameCommand command) {
@@ -35,8 +34,8 @@ class GameService implements GameUseCase {
         Game game = persistencePort.fetch();
         if (game != null) {
             game.hit(event.segment());
-            if (game.getState() == GameState.Switch_Player) {
-                uartSendPort.startButtonBlink();
+            if (game.isSwitchPlayerState()) {
+                boardPort.startButtonBlink();
             }
         }
     }
@@ -46,7 +45,7 @@ class GameService implements GameUseCase {
         Game game = persistencePort.fetch();
         if (game != null) {
             game.nextPlayer();
-            uartSendPort.stopButtonBlink();
+            boardPort.stopButtonBlink();
         }
     }
 }

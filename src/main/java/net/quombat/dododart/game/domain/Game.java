@@ -11,14 +11,16 @@ import lombok.Getter;
 
 @Getter
 public class Game {
-    @Getter(value = AccessLevel.NONE)
     private final List<DartSegment> hits;
     private final Rules rules;
     private final List<Player> players;
     private final int maxRounds;
     private int currentPlayerId;
     private int round;
+
+    @Getter(AccessLevel.NONE)
     private GameState state;
+    private int currentPlayerOldScore;
     private int currentScore;
 
     public Game(int noOfPlayers, Rules rules) {
@@ -31,7 +33,8 @@ public class Game {
         this.round = 1;
         this.state = GameState.In_Game;
         this.hits = new ArrayList<>();
-        this.currentScore = rules.startScore();
+        this.currentPlayerOldScore = rules.startScore();
+        this.currentScore = currentPlayerOldScore;
     }
 
     public void hit(DartSegment segment) {
@@ -43,12 +46,12 @@ public class Game {
         currentPlayer.hit(round, segment);
         hits.add(segment);
 
-        int preliminaryScore = rules.calculateScore(this);
+        currentScore = rules.calculateScore(this);
 
         if (isBust()) {
-            currentPlayer.updateScore(currentScore);
+            currentPlayer.updateScore(currentPlayerOldScore);
         } else {
-            currentPlayer.updateScore(preliminaryScore);
+            currentPlayer.updateScore(currentScore);
         }
 
         if (isBust() || isTurnOver()) {
@@ -82,7 +85,8 @@ public class Game {
                 round++;
             }
             currentPlayerId = nextPlayerId;
-            currentScore = determineCurrentPlayer().getScore();
+            currentPlayerOldScore = determineCurrentPlayer().getScore();
+            currentScore = currentPlayerOldScore;
             state = GameState.In_Game;
             hits.clear();
         }
@@ -153,4 +157,11 @@ public class Game {
         return rules.isWinner(this);
     }
 
+    public DartSegment lastDart() {
+        return hits.stream().reduce((a, b) -> b).orElseThrow();
+    }
+
+    public boolean isSwitchPlayerState() {
+        return state == GameState.Switch_Player;
+    }
 }

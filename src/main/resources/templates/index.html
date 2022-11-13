@@ -1,28 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<form method="post" action="#" th:action="@{/startGame}">
-    <p>
-        Select Game Type:
-        <input id="gameType-fiveOhOne" type="radio" name="gameType" value="501" checked>
-        <label for="gameType-fiveOhOne">501</label>
-        </input>
-    </p>
-    <p>
-        <label for="noOfPlayers">Number of Players:</label>
-        <select id="noOfPlayers" name="numberOfPlayers">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </select>
-    </p>
-    <p>
-        <input type="submit" value="Start"/>
-    </p>
-</form>
+<button type="button" onclick="location.href='/x01/nextPlayer'">Next Player</button>
+<div>
+    <button type="button" onclick="location.href='/x01/hit/SINGLE_20'">20</button>
+    <button type="button" onclick="location.href='/x01/hit/DOUBLE_20'">D20</button>
+    <button type="button" onclick="location.href='/x01/hit/TRIPLE_20'">T20</button>
+</div>
+<div>
+    <button type="button" onclick="location.href='/x01/hit/SINGLE_19'">19</button>
+    <button type="button" onclick="location.href='/x01/hit/DOUBLE_19'">D19</button>
+    <button type="button" onclick="location.href='/x01/hit/TRIPLE_19'">T19</button>
+</div>
+<div>
+    <button type="button" onclick="location.href='/x01/hit/SINGLE_18'">18</button>
+    <button type="button" onclick="location.href='/x01/hit/DOUBLE_18'">D18</button>
+    <button type="button" onclick="location.href='/x01/hit/TRIPLE_18'">T18</button>
+</div>
+<div>
+    <button type="button" onclick="location.href='/x01/hit/SINGLE_17'">17</button>
+    <button type="button" onclick="location.href='/x01/hit/DOUBLE_17'">D17</button>
+    <button type="button" onclick="location.href='/x01/hit/TRIPLE_17'">T17</button>
+</div>
+<div>
+    <button type="button" onclick="location.href='/x01/hit/SINGLE_16'">16</button>
+    <button type="button" onclick="location.href='/x01/hit/DOUBLE_16'">D16</button>
+    <button type="button" onclick="location.href='/x01/hit/TRIPLE_16'">T16</button>
+</div>
+<div>
+    <button type="button" onclick="location.href='/x01/hit/SINGLE_15'">15</button>
+    <button type="button" onclick="location.href='/x01/hit/DOUBLE_15'">D15</button>
+    <button type="button" onclick="location.href='/x01/hit/TRIPLE_15'">T15</button>
+</div>
+<div>
+    <button type="button" onclick="location.href='/x01/hit/SINGLE_BULL'">BULL</button>
+    <button type="button" onclick="location.href='/x01/hit/DOUBLE_BULL'">DBULL</button>
+</div>
 </body>
 </html>

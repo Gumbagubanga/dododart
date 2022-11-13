@@ -23,7 +23,7 @@ public record EliminationRules(int startScore, int targetScore, int maxRounds) i
     @Override
     public int calculateScore(Game game) {
         Player currentPlayer = game.determineCurrentPlayer();
-        int preliminaryScore = game.getCurrentScore() + game.dartsSum();
+        int preliminaryScore = game.getCurrentPlayerOldScore() + game.dartsSum();
 
         game.getPlayers().stream()
                 .filter(Predicate.not(currentPlayer::equals))

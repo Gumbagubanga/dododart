@@ -78,7 +78,7 @@ public enum DartSegment {
     TRIPLE_20(20, 3),
     ;
 
-    private final int score;
+    private final int points;
     private final int multiplier;
 
     public static final Set<DartSegment> doubles = Set.of(
@@ -116,13 +116,21 @@ public enum DartSegment {
         int score = value % 100;
 
         return Arrays.stream(values())
-                .filter(s -> s.score == score && s.multiplier == multiplier)
+                .filter(s -> s.points == score && s.multiplier == multiplier)
                 .findFirst()
                 .orElseThrow();
     }
 
     public int getScore() {
-        return score * multiplier;
+        return points * multiplier;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public int getMultiplier() {
+        return multiplier;
     }
 
     @Override
@@ -134,10 +142,10 @@ public enum DartSegment {
         } else if (this == DOUBLE_BULL) {
             return "DBull";
         } else if (multiplier == 2) {
-            return "D" + score;
+            return "D" + points;
         } else if (multiplier == 3) {
-            return "T" + score;
+            return "T" + points;
         }
-        return "S" + score;
+        return "S" + points;
     }
 }
