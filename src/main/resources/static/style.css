@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-body {
+body, body::backdrop, body:fullscreen {
     font-family: 'Roboto', sans-serif;
     color: white;
     background: url('bg.jpg') no-repeat;

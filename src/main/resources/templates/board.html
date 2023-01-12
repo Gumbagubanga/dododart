@@ -15,5 +15,17 @@
 </div>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/ext/sse.js}"></script>
+<script>
+    function enterFullscreen() {
+        let element = document.querySelector("body");
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) {  // iOS Safari
+            element.webkitRequestFullscreen();
+        }
+    }
+
+    document.addEventListener('click', enterFullscreen);
+</script>
 </body>
 </html>
