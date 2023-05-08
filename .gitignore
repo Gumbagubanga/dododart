@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### KiCad ###
+fp-info-cache
+**/pcb/*.kicad_prl
+**/pcb/*-backups
