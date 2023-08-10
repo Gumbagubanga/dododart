@@ -1,10 +1,16 @@
 package net.quombat.dododart.adapter.out.web;
 
+import com.google.gson.Gson;
+
 import net.quombat.dododart.application.ports.out.RenderPort;
+import net.quombat.dododart.domain.DomainEvent;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,7 +35,13 @@ class WebRenderAdapter implements RenderPort {
 
     @SneakyThrows
     @Override
-    public void render() {
-        sseEmitter.send("");
+    public void render(List<? super DomainEvent> domainEvents) {
+        List<String> collect = domainEvents.stream()
+            .map(Object::getClass)
+            .map(Class::getSimpleName)
+            .collect(Collectors.toList());
+        String object = new Gson().toJson(collect);
+
+        sseEmitter.send(object);
     }
 }

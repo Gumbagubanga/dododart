@@ -56,7 +56,7 @@ class CricketRulesTest {
             @Override
             public void stopButtonBlink() {
             }
-        }, () -> {
+        }, (game) -> {
         });
     }
 }

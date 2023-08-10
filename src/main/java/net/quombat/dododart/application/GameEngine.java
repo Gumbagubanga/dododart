@@ -34,7 +34,8 @@ public class GameEngine {
         game.start(players);
         persistencePort.save(game);
         boardPort.stopButtonBlink();
-        renderPort.render();
+        renderPort.render(List.copyOf(game.getDomainEvents()));
+        game.getDomainEvents().clear();
     }
 
     public void hit(ScoreSegment segment) {
@@ -47,7 +48,8 @@ public class GameEngine {
         if (game.isSwitchPlayerState()) {
             boardPort.startButtonBlink();
         }
-        renderPort.render();
+        renderPort.render(List.copyOf(game.getDomainEvents()));
+        game.getDomainEvents().clear();
     }
 
     public void buttonPressed() {
@@ -58,7 +60,8 @@ public class GameEngine {
 
         game.nextPlayer();
         boardPort.stopButtonBlink();
-        renderPort.render();
+        renderPort.render(List.copyOf(game.getDomainEvents()));
+        game.getDomainEvents().clear();
     }
 
     public Game fetchGame() {

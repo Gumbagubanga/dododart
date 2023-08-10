@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>DodoDart</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" th:href="@{/webjars/normalize.css/normalize.css}"
-          href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <link rel="stylesheet" th:href="@{/webjars/normalize.css/normalize.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/fontsource__roboto/400.css}"/>
     <link rel="stylesheet" th:href="@{/style.css}"/>
+    <title>DodoDart - Scoreboard</title>
 </head>
 <body>
 <div hx-ext="sse" sse-connect="/register">
@@ -16,33 +15,6 @@
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/ext/sse.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/howler.js/dist/howler.core.min.js}"></script>
-<script>
-    (function loadAudio() {
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                const data = JSON.parse(this.responseText);
-                window.sound = new Howl(data);
-            }
-        };
-        xmlhttp.open("GET", "./dodoaudio.json", false);
-        xmlhttp.send();
-    })();
-
-    function enterFullscreen() {
-        let element = document.querySelector("body");
-        if (element.requestFullscreen) {
-            element.requestFullscreen();
-        } else if (element.webkitRequestFullscreen) {  // iOS Safari
-            element.webkitRequestFullscreen();
-        }
-    }
-
-    document.addEventListener('click', enterFullscreen);
-
-    /*document.addEventListener('sse:message', function () {
-        window.sound.play('BORING');
-    });*/
-</script>
+<script type="text/javascript" th:src="@{/app.js}"></script>
 </body>
 </html>

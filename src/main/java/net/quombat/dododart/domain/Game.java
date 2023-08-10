@@ -10,6 +10,9 @@ import lombok.Getter;
 
 @Getter
 public abstract class Game {
+
+    private final List<? super DomainEvent> domainEvents = new ArrayList<>();
+
     private List<Player> players;
 
     private final List<ScoreSegment> hits;
@@ -61,21 +64,26 @@ public abstract class Game {
         currentPlayer.hit(round, segment);
         hits.add(segment);
 
+        if (ScoreSegment.highs.contains(segment) && ScoreSegment.triples.contains(segment)) {
+            domainEvents.add(new HighTripleHitEvent());
+        }
+
         currentScore = this.calculateScore();
 
         if (isBust()) {
             currentPlayer.updateScore(currentPlayerOldScore);
+            domainEvents.add(new BustEvent());
         } else {
             currentPlayer.updateScore(currentScore);
         }
 
         if (isBust() || isTurnOver()) {
-            state = GameState.Switch_Player;
+            changeStateToSwitchPlayer();
         }
 
         boolean gameOver = determineCurrentPlayerGameOver();
         if (gameOver) {
-            state = GameState.Game_Over;
+            changeStateToGameOver();
         }
     }
 
@@ -94,7 +102,7 @@ public abstract class Game {
 
         boolean lastRoundPlayed = nextPlayerId == 1 && maxRounds > 0 && round + 1 > maxRounds;
         if (lastRoundPlayed) {
-            state = GameState.Game_Over;
+            changeStateToGameOver();
         } else {
             if (nextPlayerId == 1) {
                 round++;
@@ -102,9 +110,22 @@ public abstract class Game {
             currentPlayerId = nextPlayerId;
             currentPlayerOldScore = determineCurrentPlayer().getScore();
             currentScore = currentPlayerOldScore;
-            state = GameState.In_Game;
+            changeStateToInGame();
             hits.clear();
         }
+    }
+
+    private void changeStateToGameOver() {
+        state = GameState.Game_Over;
+        domainEvents.add(new GameOverEvent());
+    }
+
+    private void changeStateToInGame() {
+        state = GameState.In_Game;
+    }
+
+    private void changeStateToSwitchPlayer() {
+        state = GameState.Switch_Player;
     }
 
     public Player determineCurrentPlayer() {
@@ -156,9 +177,14 @@ public abstract class Game {
         return 3;
     }
 
+    protected void registerEvent(DomainEvent event) {
+        domainEvents.add(event);
+    }
+
     private enum GameState {
         In_Game,
         Game_Over,
         Switch_Player,
     }
+
 }

@@ -1,6 +1,7 @@
 package net.quombat.dododart.domain;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class EliminationGame extends Game {
@@ -27,13 +28,24 @@ public class EliminationGame extends Game {
         Player currentPlayer = determineCurrentPlayer();
         int preliminaryScore = getCurrentPlayerOldScore() + dartsSum();
 
-        getPlayers().stream()
+        checkElimination(currentPlayer, preliminaryScore);
+
+        return preliminaryScore;
+    }
+
+    private void checkElimination(Player currentPlayer, int preliminaryScore) {
+        Optional<Player> otherPlayerWithSameScore = getPlayers().stream()
                 .filter(Predicate.not(currentPlayer::equals))
                 .filter(p -> p.getScore() != 0)
                 .filter(p -> p.getScore() == preliminaryScore)
-                .forEach(player -> player.updateScore(0));
+                .findAny();
 
-        return preliminaryScore;
+        otherPlayerWithSameScore.ifPresent(p -> elimination(p, currentPlayer));
+    }
+
+    private void elimination(Player eliminated, Player eliminator) {
+        eliminated.updateScore(startScore());
+        registerEvent(new PlayerEliminatedEvent(eliminated, eliminator));
     }
 
     private int dartsSum() {
@@ -54,4 +66,5 @@ public class EliminationGame extends Game {
     public int maxRounds() {
         return 10;
     }
+
 }
