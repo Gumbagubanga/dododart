@@ -1,6 +1,7 @@
 package net.quombat.dododart.game.adapter.in.web;
 
 import net.quombat.dododart.game.application.gametypes.CricketGameType;
+import net.quombat.dododart.game.application.gametypes.MiniminationGameType;
 import net.quombat.dododart.game.application.gametypes.SplitScoreGameType;
 import net.quombat.dododart.game.domain.Game;
 import net.quombat.dododart.game.domain.Player;
@@ -43,6 +44,13 @@ record GameViewModel(String gameMode, String round, List<PlayerViewModel> player
             return "";
         } else if (game.getRules() instanceof CricketGameType) {
             return "";
+        } else if (game.getRules() instanceof MiniminationGameType) {
+            int sum = game.getHits().stream().map(ScoreSegment::getPoints).reduce(0, Integer::sum);
+            if (sum > 0) {
+                return "%d".formatted(sum);
+            } else {
+                return "";
+            }
         } else {
             int sum = game.getHits().stream().map(ScoreSegment::getScore).reduce(0, Integer::sum);
             if (sum > 0) {

@@ -2,6 +2,7 @@ package net.quombat.dododart.game.adapter.in.web;
 
 import net.quombat.dododart.game.application.gametypes.CricketGameType;
 import net.quombat.dododart.game.application.gametypes.EliminationGameType;
+import net.quombat.dododart.game.application.gametypes.MiniminationGameType;
 import net.quombat.dododart.game.application.gametypes.SplitScoreGameType;
 import net.quombat.dododart.game.application.gametypes.X01GameType;
 import net.quombat.dododart.game.domain.GameType;
@@ -21,6 +22,7 @@ public class InputModel {
         return switch (gameType.toLowerCase()) {
             case "cricket" -> new CricketGameType();
             case "elimination" -> new EliminationGameType();
+            case "minimination" -> new MiniminationGameType();
             case "splitscore" -> new SplitScoreGameType();
             default -> new X01GameType();
         };
