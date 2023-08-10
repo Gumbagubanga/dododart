@@ -15,7 +15,20 @@
 </div>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/ext/sse.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/howler.js/dist/howler.core.min.js}"></script>
 <script>
+    (function loadAudio() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                const data = JSON.parse(this.responseText);
+                window.sound = new Howl(data);
+            }
+        };
+        xmlhttp.open("GET", "./dodoaudio.json", false);
+        xmlhttp.send();
+    })();
+
     function enterFullscreen() {
         let element = document.querySelector("body");
         if (element.requestFullscreen) {
@@ -26,6 +39,10 @@
     }
 
     document.addEventListener('click', enterFullscreen);
+
+    /*document.addEventListener('sse:message', function () {
+        window.sound.play('BORING');
+    });*/
 </script>
 </body>
 </html>
