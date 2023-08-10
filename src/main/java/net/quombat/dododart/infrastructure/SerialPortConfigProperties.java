@@ -1,4 +1,4 @@
-package net.quombat.dododart.game.adapter.out.serial;
+package net.quombat.dododart.infrastructure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;

@@ -1,4 +1,9 @@
-package net.quombat.dododart.game.domain;
+package net.quombat.dododart.game.application.gametypes;
+
+import net.quombat.dododart.game.domain.Game;
+import net.quombat.dododart.game.domain.GameType;
+import net.quombat.dododart.game.domain.Player;
+import net.quombat.dododart.game.domain.ScoreSegment;
 
 import java.util.Comparator;
 import java.util.List;
@@ -7,14 +12,14 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public record CricketRules(int startScore) implements Rules {
+public record CricketGameType() implements GameType {
 
-    private static final Set<Integer> ALL_VALID_SEGMENTS = DartSegment.highs.stream()
-            .map(DartSegment::getPoints)
+    private static final Set<Integer> ALL_VALID_SEGMENTS = ScoreSegment.highs.stream()
+            .map(ScoreSegment::getPoints)
             .collect(Collectors.toSet());
 
     @Override
-    public String gameType() {
+    public String name() {
         return "Cricket";
     }
 
@@ -45,7 +50,7 @@ public record CricketRules(int startScore) implements Rules {
     }
 
     private static int points(Game game) {
-        DartSegment lastDart = game.lastDart();
+        ScoreSegment lastDart = game.lastDart();
         int points = lastDart.getPoints();
 
         if (!ALL_VALID_SEGMENTS.contains(points)) {
@@ -63,7 +68,7 @@ public record CricketRules(int startScore) implements Rules {
         boolean sliceOpen = players.stream()
                 .filter(Predicate.not(game.determineCurrentPlayer()::equals))
                 .map(Player::getStatistics)
-                .map(PlayerStatistics::getHitDistributionPerSlice)
+                .map(Player.Statistics::getHitDistributionPerSlice)
                 .map(h -> h.getOrDefault(points, 0) < 3)
                 .reduce(Boolean::logicalAnd)
                 .orElse(false);

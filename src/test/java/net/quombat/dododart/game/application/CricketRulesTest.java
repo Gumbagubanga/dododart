@@ -2,7 +2,6 @@ package net.quombat.dododart.game.application;
 
 import net.quombat.dododart.game.adapter.out.persistence.TestMemoryAdapter;
 import net.quombat.dododart.game.application.gametypes.CricketGameType;
-import net.quombat.dododart.game.application.ports.in.CreateNewGameCommand;
 import net.quombat.dododart.game.application.ports.out.BoardPort;
 import net.quombat.dododart.game.application.ports.out.GamePersistencePort;
 import net.quombat.dododart.game.domain.ButtonPressedEvent;
@@ -30,7 +29,7 @@ class CricketRulesTest {
 
     @Test
     void cricketTest() {
-        CreateNewGameCommand command = new CreateNewGameCommand(2, new CricketGameType());
+        GameEngine.CreateNewGameCommand command = new GameEngine.CreateNewGameCommand(2, new CricketGameType());
         gameEngine.createNewGame(command);
 
         throwDarts(ScoreSegment.SINGLE_01, ScoreSegment.SINGLE_01, ScoreSegment.SINGLE_01, 0);

@@ -1,21 +1,24 @@
-package net.quombat.dododart.game.domain;
+package net.quombat.dododart.game.application.gametypes;
+
+import net.quombat.dododart.game.domain.Game;
+import net.quombat.dododart.game.domain.GameType;
+import net.quombat.dododart.game.domain.Player;
+import net.quombat.dododart.game.domain.ScoreSegment;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
-public record SplitScoreRules(int startScore) implements Rules {
+public record SplitScoreGameType() implements GameType {
 
-    private static final List<Set<DartSegment>> hitOrder = List.of(
-            DartSegment.fifteens, DartSegment.sixteens, DartSegment.doubles,
-            DartSegment.seventeens, DartSegment.eighteens, DartSegment.triples,
-            DartSegment.nineteens, DartSegment.twenties, DartSegment.bulls
+    private static final List<Set<ScoreSegment>> hitOrder = List.of(
+            ScoreSegment.fifteens, ScoreSegment.sixteens, ScoreSegment.doubles,
+            ScoreSegment.seventeens, ScoreSegment.eighteens, ScoreSegment.triples,
+            ScoreSegment.nineteens, ScoreSegment.twenties, ScoreSegment.bulls
     );
 
     @Override
-    public String gameType() {
+    public String name() {
         return "Split Score";
     }
 
@@ -33,13 +36,11 @@ public record SplitScoreRules(int startScore) implements Rules {
     public int calculateScore(Game game) {
         int round = game.getRound();
 
-        Set<DartSegment> dartSegments = hitOrder.get(round - 1);
+        Set<ScoreSegment> dartSegments = hitOrder.get(round - 1);
 
-        int sum = Stream.of(game.firstDart(), game.secondDart(), game.thirdDart())
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+        int sum = game.getHits().stream()
                 .filter(dartSegments::contains)
-                .map(DartSegment::getScore)
+                .map(ScoreSegment::getScore)
                 .reduce(0, Integer::sum);
 
         int score = game.getCurrentPlayerOldScore();
@@ -57,6 +58,11 @@ public record SplitScoreRules(int startScore) implements Rules {
     @Override
     public Player leader(Game game) {
         return game.getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
+    }
+
+    @Override
+    public int startScore() {
+        return 40;
     }
 
     @Override

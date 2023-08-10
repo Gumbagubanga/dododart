@@ -2,8 +2,7 @@ package net.quombat.dododart.game.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import lombok.AccessLevel;
@@ -11,10 +10,11 @@ import lombok.Getter;
 
 @Getter
 public class Game {
-    private final List<DartSegment> hits;
-    private final Rules rules;
+    private final GameType rules;
     private final List<Player> players;
-    private final int maxRounds;
+
+    private List<ScoreSegment> hits;
+    private int maxRounds;
     private int currentPlayerId;
     private int round;
 
@@ -23,11 +23,16 @@ public class Game {
     private int currentPlayerOldScore;
     private int currentScore;
 
-    public Game(int noOfPlayers, Rules rules) {
+    public Game(GameType rules, List<Player> players) {
+        Objects.requireNonNull(rules);
+        Objects.requireNonNull(players);
+
         this.rules = rules;
-        this.players = IntStream.rangeClosed(1, noOfPlayers).boxed()
-                .map(playerNo -> new Player(playerNo, rules.startScore()))
-                .collect(Collectors.toList());
+        this.players = players;
+        init(rules);
+    }
+
+    private void init(GameType rules) {
         this.maxRounds = rules.maxRounds();
         this.currentPlayerId = 1;
         this.round = 1;
@@ -37,7 +42,7 @@ public class Game {
         this.currentScore = currentPlayerOldScore;
     }
 
-    public void hit(DartSegment segment) {
+    public void hit(ScoreSegment segment) {
         if (state != GameState.In_Game) {
             return;
         }
@@ -71,11 +76,11 @@ public class Game {
 
         Player currentPlayer = determineCurrentPlayer();
         if (state == GameState.In_Game) {
-            IntStream.range(0, 3 - hits.size()).forEach(i -> hits.add(DartSegment.MISS));
+            IntStream.range(0, rules.throwsPerTurn() - hits.size()).forEach(i -> hits.add(ScoreSegment.MISS));
             currentPlayer.updateScore(rules.calculateScore(this));
         }
 
-        int nextPlayerId = determineNextPlayer();
+        int nextPlayerId = determineNextPlayerId();
 
         boolean lastRoundPlayed = nextPlayerId == 1 && maxRounds > 0 && round + 1 > maxRounds;
         if (lastRoundPlayed) {
@@ -100,6 +105,10 @@ public class Game {
         return state == GameState.Game_Over;
     }
 
+    public boolean isSwitchPlayerState() {
+        return state == GameState.Switch_Player;
+    }
+
     public Player determineWinner() {
         Player currentPlayer = determineCurrentPlayer();
         if (isWinner()) {
@@ -117,36 +126,16 @@ public class Game {
         return isWinner() || (round == maxRounds && last && isTurnOver());
     }
 
-    private int determineNextPlayer() {
-        int i = currentPlayerId + 1;
-        if (i % (players.size() + 1) == 0) {
-            i = 1;
+    private int determineNextPlayerId() {
+        int nextPlayerId = currentPlayerId + 1;
+        if (nextPlayerId % (players.size() + 1) == 0) {
+            nextPlayerId = 1;
         }
-        return i;
+        return nextPlayerId;
     }
 
     public boolean isTurnOver() {
-        return hits.size() == 3;
-    }
-
-    public Optional<DartSegment> firstDart() {
-        return dartThrow(1);
-    }
-
-    public Optional<DartSegment> secondDart() {
-        return dartThrow(2);
-    }
-
-    public Optional<DartSegment> thirdDart() {
-        return dartThrow(3);
-    }
-
-    public int dartsSum() {
-        return hits.stream().map(DartSegment::getScore).reduce(0, Integer::sum);
-    }
-
-    public Optional<DartSegment> dartThrow(int throwNo) {
-        return hits.stream().skip(throwNo - 1).limit(1).findFirst();
+        return hits.size() == rules.throwsPerTurn();
     }
 
     public boolean isBust() {
@@ -157,11 +146,14 @@ public class Game {
         return rules.isWinner(this);
     }
 
-    public DartSegment lastDart() {
+    public ScoreSegment lastDart() {
         return hits.stream().reduce((a, b) -> b).orElseThrow();
     }
 
-    public boolean isSwitchPlayerState() {
-        return state == GameState.Switch_Player;
+    private enum GameState {
+        In_Game,
+        Game_Over,
+        Switch_Player,
+        ;
     }
 }

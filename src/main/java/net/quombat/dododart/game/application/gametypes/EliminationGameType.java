@@ -1,12 +1,19 @@
-package net.quombat.dododart.game.domain;
+package net.quombat.dododart.game.application.gametypes;
+
+import net.quombat.dododart.game.domain.Game;
+import net.quombat.dododart.game.domain.GameType;
+import net.quombat.dododart.game.domain.Player;
+import net.quombat.dododart.game.domain.ScoreSegment;
 
 import java.util.Comparator;
 import java.util.function.Predicate;
 
-public record EliminationRules(int startScore, int targetScore, int maxRounds) implements Rules {
+public record EliminationGameType() implements GameType {
+
+    private static final int targetScore = 301;
 
     @Override
-    public String gameType() {
+    public String name() {
         return "%d Elimination".formatted(targetScore);
     }
 
@@ -23,7 +30,7 @@ public record EliminationRules(int startScore, int targetScore, int maxRounds) i
     @Override
     public int calculateScore(Game game) {
         Player currentPlayer = game.determineCurrentPlayer();
-        int preliminaryScore = game.getCurrentPlayerOldScore() + game.dartsSum();
+        int preliminaryScore = game.getCurrentPlayerOldScore() + dartsSum(game);
 
         game.getPlayers().stream()
                 .filter(Predicate.not(currentPlayer::equals))
@@ -34,8 +41,22 @@ public record EliminationRules(int startScore, int targetScore, int maxRounds) i
         return preliminaryScore;
     }
 
+    public static int dartsSum(Game game) {
+        return game.getHits().stream().map(ScoreSegment::getScore).reduce(0, Integer::sum);
+    }
+
     @Override
     public Player leader(Game game) {
         return game.getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
+    }
+
+    @Override
+    public int startScore() {
+        return 0;
+    }
+
+    @Override
+    public int maxRounds() {
+        return 10;
     }
 }

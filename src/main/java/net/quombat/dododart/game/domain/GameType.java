@@ -1,8 +1,8 @@
 package net.quombat.dododart.game.domain;
 
-public interface Rules {
+public interface GameType {
 
-    String gameType();
+    String name();
 
     boolean isBust(Game game);
 
@@ -15,4 +15,8 @@ public interface Rules {
     Player leader(Game game);
 
     int maxRounds();
+
+    default int throwsPerTurn() {
+        return 3;
+    }
 }

@@ -20,6 +20,7 @@ body {
     grid-column-gap: 0;
     grid-row-gap: 0;
 }
+
 /*
 #score-wrapper > div {
     outline: 1px solid red;
@@ -89,6 +90,10 @@ body {
     place-self: center;
     font-size: 11ch;
     font-weight: bold;
+}
+
+.currentScore.Cricket {
+    font-size: 7ch;
 }
 
 .score {
