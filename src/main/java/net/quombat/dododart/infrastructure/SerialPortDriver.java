@@ -5,9 +5,9 @@ import com.google.gson.Gson;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
-import net.quombat.dododart.game.domain.ButtonPressedEvent;
-import net.quombat.dododart.game.domain.DartHitEvent;
-import net.quombat.dododart.game.domain.ScoreSegment;
+import net.quombat.dododart.adapter.in.serial.ButtonPressedEvent;
+import net.quombat.dododart.adapter.in.serial.DartHitEvent;
+import net.quombat.dododart.domain.ScoreSegment;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -59,7 +59,8 @@ class SerialPortDriver implements SerialPortInterface {
                     if (boardDatagram.isButtonPressed()) {
                         publisher.publishEvent(new ButtonPressedEvent());
                     } else {
-                        publisher.publishEvent(new DartHitEvent(ScoreSegment.from(boardDatagram.getDart())));
+                        ScoreSegment segment = ScoreSegment.from(boardDatagram.getDart());
+                        publisher.publishEvent(new DartHitEvent(segment));
                     }
                 }
             });
