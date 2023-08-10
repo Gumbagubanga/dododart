@@ -1,11 +1,11 @@
 package net.quombat.dododart.adapter.in.web;
 
+import net.quombat.dododart.domain.CricketGame;
 import net.quombat.dododart.domain.Game;
+import net.quombat.dododart.domain.MiniminationGame;
 import net.quombat.dododart.domain.Player;
 import net.quombat.dododart.domain.ScoreSegment;
-import net.quombat.dododart.domain.gametypes.CricketGameType;
-import net.quombat.dododart.domain.gametypes.MiniminationGameType;
-import net.quombat.dododart.domain.gametypes.SplitScoreGameType;
+import net.quombat.dododart.domain.SplitScoreGame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ record GameViewModel(String gameMode, String round, List<PlayerViewModel> player
 
         Player currentPlayer = game.determineCurrentPlayer();
 
-        String gameMode = game.getRules().name();
+        String gameMode = game.name();
         String round = "Runde: %s".formatted(round(game.getRound(), game.getMaxRounds()));
         List<PlayerViewModel> players = players(game);
         String playerName = "SPIELER %d".formatted(currentPlayer.getId());
@@ -40,11 +40,11 @@ record GameViewModel(String gameMode, String round, List<PlayerViewModel> player
     }
 
     public static String dartsSum(Game game) {
-        if (game.getRules() instanceof SplitScoreGameType) {
+        if (game instanceof SplitScoreGame) {
             return "";
-        } else if (game.getRules() instanceof CricketGameType) {
+        } else if (game instanceof CricketGame) {
             return "";
-        } else if (game.getRules() instanceof MiniminationGameType) {
+        } else if (game instanceof MiniminationGame) {
             int sum = game.getHits().stream().map(ScoreSegment::getPoints).reduce(0, Integer::sum);
             if (sum > 0) {
                 return "%d".formatted(sum);
@@ -78,9 +78,9 @@ record GameViewModel(String gameMode, String round, List<PlayerViewModel> player
     }
 
     private static String getCurrentPlayerScore(Game game) {
-        if (game.getRules() instanceof SplitScoreGameType) {
+        if (game instanceof SplitScoreGame) {
             return splitScore(game);
-        } else if (game.getRules() instanceof CricketGameType) {
+        } else if (game instanceof CricketGame) {
             StringBuilder result = cricket(game);
             return result.toString();
         } else {

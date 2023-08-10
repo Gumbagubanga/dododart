@@ -9,12 +9,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 @Getter
-public class Game {
-    private final GameType rules;
-    private final List<Player> players;
+public abstract class Game {
+    private List<Player> players;
 
-    private List<ScoreSegment> hits;
-    private int maxRounds;
+    private final List<ScoreSegment> hits;
+    private final int maxRounds;
     private int currentPlayerId;
     private int round;
 
@@ -23,23 +22,34 @@ public class Game {
     private int currentPlayerOldScore;
     private int currentScore;
 
-    public Game(GameType rules, List<Player> players) {
-        Objects.requireNonNull(rules);
-        Objects.requireNonNull(players);
-
-        this.rules = rules;
-        this.players = players;
-        init(rules);
-    }
-
-    private void init(GameType rules) {
-        this.maxRounds = rules.maxRounds();
+    public Game() {
+        this.maxRounds = maxRounds();
         this.currentPlayerId = 1;
         this.round = 1;
         this.state = GameState.In_Game;
         this.hits = new ArrayList<>();
-        this.currentPlayerOldScore = rules.startScore();
+        this.currentPlayerOldScore = startScore();
         this.currentScore = currentPlayerOldScore;
+    }
+
+    public abstract String name();
+
+    public abstract boolean isBust();
+
+    public abstract boolean isWinner();
+
+    public abstract int calculateScore();
+
+    public abstract int startScore();
+
+    public abstract Player leader();
+
+    public abstract int maxRounds();
+
+    public void start(List<Player> players) {
+        Objects.requireNonNull(players);
+
+        this.players = players;
     }
 
     public void hit(ScoreSegment segment) {
@@ -51,7 +61,7 @@ public class Game {
         currentPlayer.hit(round, segment);
         hits.add(segment);
 
-        currentScore = rules.calculateScore(this);
+        currentScore = this.calculateScore();
 
         if (isBust()) {
             currentPlayer.updateScore(currentPlayerOldScore);
@@ -76,8 +86,8 @@ public class Game {
 
         Player currentPlayer = determineCurrentPlayer();
         if (state == GameState.In_Game) {
-            IntStream.range(0, rules.throwsPerTurn() - hits.size()).forEach(i -> hits.add(ScoreSegment.MISS));
-            currentPlayer.updateScore(rules.calculateScore(this));
+            IntStream.range(0, this.throwsPerTurn() - hits.size()).forEach(i -> hits.add(ScoreSegment.MISS));
+            currentPlayer.updateScore(this.calculateScore());
         }
 
         int nextPlayerId = determineNextPlayerId();
@@ -114,7 +124,7 @@ public class Game {
         if (isWinner()) {
             return currentPlayer;
         } else {
-            return rules.leader(this);
+            return this.leader();
         }
     }
 
@@ -135,25 +145,20 @@ public class Game {
     }
 
     public boolean isTurnOver() {
-        return hits.size() == rules.throwsPerTurn();
-    }
-
-    public boolean isBust() {
-        return rules.isBust(this);
-    }
-
-    public boolean isWinner() {
-        return rules.isWinner(this);
+        return hits.size() == this.throwsPerTurn();
     }
 
     public ScoreSegment lastDart() {
         return hits.stream().reduce((a, b) -> b).orElseThrow();
     }
 
+    public int throwsPerTurn() {
+        return 3;
+    }
+
     private enum GameState {
         In_Game,
         Game_Over,
         Switch_Player,
-        ;
     }
 }

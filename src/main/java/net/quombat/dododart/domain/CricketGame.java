@@ -1,9 +1,4 @@
-package net.quombat.dododart.domain.gametypes;
-
-import net.quombat.dododart.domain.Game;
-import net.quombat.dododart.domain.GameType;
-import net.quombat.dododart.domain.Player;
-import net.quombat.dododart.domain.ScoreSegment;
+package net.quombat.dododart.domain;
 
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +7,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public record CricketGameType() implements GameType {
+public class CricketGame extends Game {
 
     private static final Set<Integer> ALL_VALID_SEGMENTS = ScoreSegment.highs.stream()
             .map(ScoreSegment::getPoints)
@@ -24,13 +19,13 @@ public record CricketGameType() implements GameType {
     }
 
     @Override
-    public boolean isBust(Game game) {
+    public boolean isBust() {
         return false;
     }
 
     @Override
-    public boolean isWinner(Game game) {
-        Player currentPlayer = game.determineCurrentPlayer();
+    public boolean isWinner() {
+        Player currentPlayer = this.determineCurrentPlayer();
         Map<Integer, Integer> hitDistributionPerSlice = currentPlayer.getStatistics()
                 .getHitDistributionPerSlice();
 
@@ -39,17 +34,18 @@ public record CricketGameType() implements GameType {
                 .reduce(Boolean::logicalAnd)
                 .orElse(false);
 
-        boolean isLeader = currentPlayer.equals(leader(game));
+        boolean isLeader = currentPlayer.equals(leader());
 
         return allSegmentsClosed && isLeader;
     }
 
     @Override
-    public int calculateScore(Game game) {
-        return game.getCurrentScore() + points(game);
+    public int calculateScore() {
+        return getCurrentScore() + points();
     }
 
-    private static int points(Game game) {
+    private int points() {
+        Game game = this;
         ScoreSegment lastDart = game.lastDart();
         int points = lastDart.getPoints();
 
@@ -89,8 +85,8 @@ public record CricketGameType() implements GameType {
     }
 
     @Override
-    public Player leader(Game game) {
-        return game.getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
+    public Player leader() {
+        return getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
     }
 
     @Override

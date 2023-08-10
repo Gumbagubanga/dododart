@@ -1,15 +1,10 @@
-package net.quombat.dododart.domain.gametypes;
-
-import net.quombat.dododart.domain.Game;
-import net.quombat.dododart.domain.GameType;
-import net.quombat.dododart.domain.Player;
-import net.quombat.dododart.domain.ScoreSegment;
+package net.quombat.dododart.domain;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public record SplitScoreGameType() implements GameType {
+public class SplitScoreGame extends Game {
 
     private static final List<Set<ScoreSegment>> hitOrder = List.of(
             ScoreSegment.fifteens, ScoreSegment.sixteens, ScoreSegment.doubles,
@@ -23,28 +18,28 @@ public record SplitScoreGameType() implements GameType {
     }
 
     @Override
-    public boolean isBust(Game game) {
+    public boolean isBust() {
         return false;
     }
 
     @Override
-    public boolean isWinner(Game game) {
+    public boolean isWinner() {
         return false;
     }
 
     @Override
-    public int calculateScore(Game game) {
-        int round = game.getRound();
+    public int calculateScore() {
+        int round = getRound();
 
         Set<ScoreSegment> dartSegments = hitOrder.get(round - 1);
 
-        int sum = game.getHits().stream()
+        int sum = getHits().stream()
                 .filter(dartSegments::contains)
                 .map(ScoreSegment::getScore)
                 .reduce(0, Integer::sum);
 
-        int score = game.getCurrentPlayerOldScore();
-        if (game.isTurnOver()) {
+        int score = getCurrentPlayerOldScore();
+        if (isTurnOver()) {
             if (sum == 0) {
                 return score / 2;
             } else {
@@ -56,8 +51,8 @@ public record SplitScoreGameType() implements GameType {
     }
 
     @Override
-    public Player leader(Game game) {
-        return game.getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
+    public Player leader() {
+        return getPlayers().stream().max(Comparator.comparing(Player::getScore)).orElseThrow();
     }
 
     @Override
@@ -69,5 +64,4 @@ public record SplitScoreGameType() implements GameType {
     public int maxRounds() {
         return hitOrder.size();
     }
-
 }

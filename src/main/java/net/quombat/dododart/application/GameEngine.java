@@ -4,7 +4,6 @@ import net.quombat.dododart.application.ports.out.BoardPort;
 import net.quombat.dododart.application.ports.out.GamePersistencePort;
 import net.quombat.dododart.application.ports.out.RenderPort;
 import net.quombat.dododart.domain.Game;
-import net.quombat.dododart.domain.GameType;
 import net.quombat.dododart.domain.Player;
 import net.quombat.dododart.domain.ScoreSegment;
 
@@ -25,14 +24,14 @@ public class GameEngine {
     private final RenderPort renderPort;
 
     public void createNewGame(CreateNewGameCommand command) {
+        Game game = command.rules();
         int noOfPlayers = command.noOfPlayers();
-        GameType rules = command.rules();
 
         List<Player> players = IntStream.rangeClosed(1, noOfPlayers).boxed()
-                .map(playerNo -> new Player(playerNo, rules.startScore()))
+                .map(playerNo -> new Player(playerNo, game.startScore()))
                 .collect(Collectors.toList());
-        Game game = new Game(rules, players);
 
+        game.start(players);
         persistencePort.save(game);
         boardPort.stopButtonBlink();
         renderPort.render();
@@ -66,6 +65,6 @@ public class GameEngine {
         return persistencePort.fetch();
     }
 
-    public record CreateNewGameCommand(int noOfPlayers, GameType rules) {
+    public record CreateNewGameCommand(int noOfPlayers, Game rules) {
     }
 }

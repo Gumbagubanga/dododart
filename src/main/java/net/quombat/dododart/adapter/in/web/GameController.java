@@ -14,6 +14,8 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static net.quombat.dododart.application.GameEngine.CreateNewGameCommand;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -24,7 +26,7 @@ class GameController {
     @ResponseBody
     @PostMapping(headers = "HX-Request", produces = MediaType.APPLICATION_JSON_VALUE)
     public void createNewGame(@ModelAttribute InputModel inputModel) {
-        GameEngine.CreateNewGameCommand command = new GameEngine.CreateNewGameCommand(inputModel.getNoOfPlayers(), inputModel.getRules());
+        CreateNewGameCommand command = new CreateNewGameCommand(inputModel.getNoOfPlayers(), inputModel.getRules());
         gameEngine.createNewGame(command);
     }
 
