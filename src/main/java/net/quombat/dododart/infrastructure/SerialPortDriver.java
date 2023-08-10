@@ -71,7 +71,9 @@ class SerialPortDriver implements SerialPortInterface {
 
     @PreDestroy
     void onDestroy() {
-        serialPort.closePort();
+        if (serialPort != null) {
+            serialPort.closePort();
+        }
     }
 
     @Override
