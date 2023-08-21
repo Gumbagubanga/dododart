@@ -1,37 +1,135 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>DodoDart</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" th:href="@{/webjars/normalize.css/normalize.css}"
-          href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <link rel="stylesheet"
+          th:href="@{/webjars/material-components-web/dist/material-components-web.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/material-icons/iconfont/material-icons.css}">
     <link rel="stylesheet" th:href="@{/webjars/fontsource__roboto/400.css}"/>
-</head>
-<body>
-<div>
-    <a href="/board">
-        <button>ScoreBoard</button>
-    </a>
-    <form th:action="@{/}" method="post" th:object="${inputModel}">
-        <div>
-            <label for="noOfPlayers">Anzahl der Spieler</label>
-            <input id="noOfPlayers" name="noOfPlayers" th:field="*{noOfPlayers}"
-                   type="number" min="1" max="8" step="1" value="2">
-        </div>
-        <div>
-            <select id="gameType" th:field="*{gameType}">
-                <option selected value="x01">501</option>
-                <option value="elimination">301 Elimination</option>
-                <option value="minimination">101 Minimination</option>
-                <option value="splitscore">Split Score</option>
-                <option value="cricket">Cricket</option>
-            </select>
-            <button type="button" hx-post="/" hx-swap="none">New Game</button>
-        </div>
-    </form>
-</div>
+    <title>DodoDart - Remote Menu</title>
+    <style>
+        body {
+            margin: 0;
+        }
 
+        .mdc-text-field, .mdc-select {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="mdc-typography">
+<form th:action="@{/}" method="post" th:object="${inputModel}">
+    <header class="mdc-top-app-bar mdc-top-app-bar--fixed">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <span class="mdc-top-app-bar__title">DodoDart - Remote Menu</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
+                     role="toolbar">
+                <button class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+                        hx-post="/" hx-swap="none"
+                        aria-label="Play">play_circle_filled
+                </button>
+            </section>
+        </div>
+    </header>
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="mdc-layout-grid">
+            <div class="mdc-layout-grid__inner">
+                <div class="mdc-layout-grid__cell">
+                    <div class="mdc-select mdc-select--outlined">
+                        <input type="hidden" name="demo-input" th:field="*{gameType}">
+                        <div class="mdc-select__anchor" aria-labelledby="outlined-select-label">
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span id="outlined-select-label" class="mdc-floating-label">
+                                        Pick a Game
+                                    </span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                            <span class="mdc-select__selected-text-container">
+                                <span id="demo-selected-text"
+                                      class="mdc-select__selected-text">501</span>
+                            </span>
+                        </div>
+                        <div
+                            class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                            <ul class="mdc-deprecated-list" role="listbox"
+                                aria-label="Game picker listbox">
+                                <li class="mdc-deprecated-list-item mdc-deprecated-list-item--selected"
+                                    aria-selected="false"
+                                    data-value="x01"
+                                    role="option">
+                                    <span class="mdc-deprecated-list-item__ripple"></span>
+                                    <span class="mdc-deprecated-list-item__text">501</span>
+                                </li>
+                                <li class="mdc-deprecated-list-item" aria-selected="false"
+                                    data-value="elimination"
+                                    role="option">
+                                    <span class="mdc-deprecated-list-item__ripple"></span>
+                                    <span
+                                        class="mdc-deprecated-list-item__text">301 Elimination</span>
+                                </li>
+                                <li class="mdc-deprecated-list-item" aria-selected="false"
+                                    data-value="minimination"
+                                    role="option">
+                                    <span class="mdc-deprecated-list-item__ripple"></span>
+                                    <span
+                                        class="mdc-deprecated-list-item__text">101 Minimination</span>
+                                </li>
+                                <li class="mdc-deprecated-list-item" aria-selected="false"
+                                    data-value="splitscore"
+                                    role="option">
+                                    <span class="mdc-deprecated-list-item__ripple"></span>
+                                    <span class="mdc-deprecated-list-item__text">Split Score</span>
+                                </li>
+                                <li class="mdc-deprecated-list-item" aria-selected="false"
+                                    data-value="cricket"
+                                    role="option">
+                                    <span class="mdc-deprecated-list-item__ripple"></span>
+                                    <span class="mdc-deprecated-list-item__text">Cricket</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mdc-layout-grid__cell">
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" id="my-label-id">Player No.</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                        <input class="mdc-text-field__input"
+                               aria-labelledby="my-label-id"
+                               type="number" min="1" max="8" step="1" value="2"
+                               th:field="*{noOfPlayers}">
+                    </label>
+                </div>
+
+                <div class="mdc-layout-grid__cell">
+                    <a class="mdc-button mdc-button--outlined" th:href="@{board}">
+                        <span class="mdc-button__ripple"></span>
+                        <span class="mdc-button__label">Open Scoreboard</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</form>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+<script type="text/javascript"
+        th:src="@{/webjars/material-components-web/dist/material-components-web.min.js}"></script>
+<script type="text/javascript">
+    mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
+    mdc.ripple.MDCRipple.attachTo(document.querySelector('.mdc-button'));
+    mdc.select.MDCSelect.attachTo(document.querySelector('.mdc-select'));
+</script>
 </body>
 </html>
