@@ -1,38 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>DodoDart</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" th:href="@{/webjars/normalize.css/normalize.css}"
-          href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <link rel="stylesheet"
+          th:href="@{/webjars/material-components-web/dist/material-components-web.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/material-icons/iconfont/material-icons.css}">
     <link rel="stylesheet" th:href="@{/webjars/fontsource__roboto/400.css}"/>
+    <title>DodoDart - Remote Debug Menu</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
 </head>
-<body>
-<div>
-    <button type="button" hx-post="/nextPlayer" hx-swap="none">Next Player</button>
-</div>
+<body class="mdc-typography">
+<button class="mdc-button mdc-button--outlined" hx-post="/nextPlayer" hx-swap="none">
+    <span class="mdc-button__ripple"></span>
+    <span class="mdc-button__label">Next Player</span>
+</button>
+
 <th:block th:each="i: ${#numbers.sequence(20, 1)}">
     <div>
-        <button type="button"
-                th:attr="hx-post=|@{/hit/SINGLE_}${#numbers.formatInteger(i,2)}|,hx-swap=|none|"
-                th:text="${i}">20
+        <button class="mdc-button mdc-button--outlined"
+                th:attr="hx-post=|@{/hit/SINGLE_}${#numbers.formatInteger(i,2)}|,hx-swap=|none|">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label" th:text="${i}">20</span>
         </button>
-        <button type="button"
-                th:attr="hx-post=|@{/hit/DOUBLE_}${#numbers.formatInteger(i,2)}|,hx-swap=|none|"
-                th:text="|D${i}|">D20
+        <button class="mdc-button mdc-button--outlined"
+                th:attr="hx-post=|@{/hit/DOUBLE_}${#numbers.formatInteger(i,2)}|,hx-swap=|none|">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label" th:text="|D${i}|">D20</span>
         </button>
-        <button type="button"
-                th:attr="hx-post=|@{/hit/TRIPLE_}${#numbers.formatInteger(i,2)}|,hx-swap=|none|"
-                th:text="|T${i}|">T20
+        <button class="mdc-button mdc-button--outlined"
+                th:attr="hx-post=|@{/hit/TRIPLE_}${#numbers.formatInteger(i,2)}|,hx-swap=|none|">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label" th:text="|T${i}|">T20</span>
         </button>
     </div>
 </th:block>
 <div>
-    <button type="button" hx-post="/hit/SINGLE_BULL" hx-swap="none">BULL</button>
-    <button type="button" hx-post="/hit/DOUBLE_BULL" hx-swap="none">DBULL</button>
+    <button class="mdc-button mdc-button--outlined"
+            hx-post="/hit/SINGLE_BULL" hx-swap="none">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__label">BULL</span>
+    </button>
+    <button class="mdc-button mdc-button--outlined"
+            hx-post="/hit/DOUBLE_BULL" hx-swap="none">
+        <span class="mdc-button__ripple"></span>
+        <span class="mdc-button__label">DBULL</span>
+    </button>
 </div>
 
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+<script type="text/javascript"
+        th:src="@{/webjars/material-components-web/dist/material-components-web.min.js}"></script>
 </body>
+<script type="text/javascript">
+    [].map.call(document.querySelectorAll('.mdc-button'), function (el) {
+        return mdc.ripple.MDCRipple.attachTo(el);
+    });
+</script>
 </html>
