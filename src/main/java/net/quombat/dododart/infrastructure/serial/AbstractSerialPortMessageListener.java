@@ -1,4 +1,4 @@
-package net.quombat.dododart.infrastructure;
+package net.quombat.dododart.infrastructure.serial;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortMessageListener;

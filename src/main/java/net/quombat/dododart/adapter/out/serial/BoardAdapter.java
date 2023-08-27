@@ -1,7 +1,7 @@
 package net.quombat.dododart.adapter.out.serial;
 
 import net.quombat.dododart.application.ports.out.BoardPort;
-import net.quombat.dododart.infrastructure.SerialPortInterface;
+import net.quombat.dododart.infrastructure.serial.SerialPortInterface;
 
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.stereotype.Component;

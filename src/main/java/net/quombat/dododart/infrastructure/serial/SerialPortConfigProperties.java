@@ -1,4 +1,4 @@
-package net.quombat.dododart.infrastructure;
+package net.quombat.dododart.infrastructure.serial;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
