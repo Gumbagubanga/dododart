@@ -11,14 +11,12 @@ import net.quombat.dododart.domain.ScoreSegment;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +75,7 @@ class SerialPortDriver implements SerialPortInterface {
     }
 
     @Override
-    public void send(PayloadApplicationEvent<String> event) {
+    public void send(DartBoardEvent event) {
         byte[] bytes = gson.toJson(event).getBytes(StandardCharsets.UTF_8);
         if (serialPort != null) {
             serialPort.writeBytes(bytes, bytes.length);

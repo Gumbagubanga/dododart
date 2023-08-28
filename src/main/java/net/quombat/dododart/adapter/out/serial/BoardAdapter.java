@@ -1,9 +1,9 @@
 package net.quombat.dododart.adapter.out.serial;
 
 import net.quombat.dododart.application.ports.out.BoardPort;
+import net.quombat.dododart.infrastructure.serial.DartBoardEvent;
 import net.quombat.dododart.infrastructure.serial.SerialPortInterface;
 
-import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -18,11 +18,11 @@ class BoardAdapter implements BoardPort {
 
     @Override
     public void startButtonBlink() {
-        serialPort.send(new PayloadApplicationEvent<>(this, "ButtonStartBlink"));
+        serialPort.send(new DartBoardEvent("ButtonStartBlink"));
     }
 
     @Override
     public void stopButtonBlink() {
-        serialPort.send(new PayloadApplicationEvent<>(this, "ButtonStopBlink"));
+        serialPort.send(new DartBoardEvent("ButtonStopBlink"));
     }
 }

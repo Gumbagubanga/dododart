@@ -1,7 +1,5 @@
 package net.quombat.dododart.infrastructure.serial;
 
-import org.springframework.context.PayloadApplicationEvent;
-
 public interface SerialPortInterface {
-    void send(PayloadApplicationEvent<String> event);
+    void send(DartBoardEvent event);
 }

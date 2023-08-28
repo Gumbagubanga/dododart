@@ -32,7 +32,7 @@ class DebugGameController {
     }
 
     @PostMapping("/hit/{segment}")
-    public String hit(@PathVariable("segment") ScoreSegment segment) {
+    public String hit(@PathVariable ScoreSegment segment) {
         gameEngine.hit(segment);
         return "debug";
     }
