@@ -1,19 +1,17 @@
 package net.quombat.dododart.application;
 
+import lombok.RequiredArgsConstructor;
 import net.quombat.dododart.application.ports.out.BoardPort;
 import net.quombat.dododart.application.ports.out.GamePersistencePort;
 import net.quombat.dododart.application.ports.out.RenderPort;
 import net.quombat.dododart.domain.Game;
 import net.quombat.dododart.domain.Player;
 import net.quombat.dododart.domain.ScoreSegment;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -64,8 +62,14 @@ public class GameEngine {
         game.getDomainEvents().clear();
     }
 
-    public Game fetchGame() {
-        return persistencePort.fetch();
+    public Screen getScreen() {
+        Game game = persistencePort.fetch();
+
+        if (game == null) {
+            return new TitleScreen();
+        }
+
+        return new GameScreen(game);
     }
 
     public record CreateNewGameCommand(int noOfPlayers, Game rules) {

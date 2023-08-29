@@ -10,7 +10,7 @@
 </head>
 <body>
 <div hx-ext="sse" sse-connect="/register">
-    <div id="score-wrapper" hx-trigger="sse:message" hx-get="/game"></div>
+    <div id="score-wrapper" hx-trigger="sse:message, load" hx-get="/render"></div>
 </div>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/ext/sse.js}"></script>

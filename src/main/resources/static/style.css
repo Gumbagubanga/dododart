@@ -26,6 +26,14 @@ body, body::backdrop, body:fullscreen {
     outline: 1px solid red;
 }
 */
+
+.center {
+    grid-area: 1 / 1 / 9 / 5;
+    place-self: center;
+    font-size: 11ch;
+    font-weight: bold;
+}
+
 .messages {
     grid-area: 1 / 2 / 3 / 4;
     font-size: 3em;
