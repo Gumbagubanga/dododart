@@ -40,27 +40,27 @@ public class Player {
 
         public double getPointsPerDart() {
             return statistics.stream()
-                    .map(Hits::segment)
-                    .mapToInt(ScoreSegment::getScore)
-                    .average()
-                    .orElse(0d);
+                .map(Hits::segment)
+                .mapToInt(ScoreSegment::getScore)
+                .average()
+                .orElse(0d);
         }
 
         public double getPointsPerRound() {
             return statistics.stream()
-                    .collect(Collectors.groupingBy(Hits::round,
-                            Collectors.summingInt(e -> e.segment.getScore())))
-                    .values().stream()
-                    .mapToInt(s -> s)
-                    .average()
-                    .orElse(0d);
+                .collect(Collectors.groupingBy(Hits::round,
+                    Collectors.summingInt(e -> e.segment.getScore())))
+                .values().stream()
+                .mapToInt(s -> s)
+                .average()
+                .orElse(0d);
         }
 
         public Map<Integer, Integer> getHitDistributionPerSlice() {
             return statistics.stream()
-                    .map(Hits::segment)
-                    .collect(Collectors.groupingBy(ScoreSegment::getPoints,
-                            Collectors.summingInt(ScoreSegment::getMultiplier)));
+                .map(Hits::segment)
+                .collect(Collectors.groupingBy(ScoreSegment::getPoints,
+                    Collectors.summingInt(ScoreSegment::getMultiplier)));
         }
 
         private record Hits(int round, ScoreSegment segment) {

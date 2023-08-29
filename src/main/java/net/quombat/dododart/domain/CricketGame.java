@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 public class CricketGame extends Game {
 
     private static final Set<Integer> ALL_VALID_SEGMENTS = ScoreSegment.highs.stream()
-            .map(ScoreSegment::getPoints)
-            .collect(Collectors.toSet());
+        .map(ScoreSegment::getPoints)
+        .collect(Collectors.toSet());
 
     @Override
     public String name() {
@@ -27,12 +27,12 @@ public class CricketGame extends Game {
     public boolean isWinner() {
         Player currentPlayer = this.determineCurrentPlayer();
         Map<Integer, Integer> hitDistributionPerSlice = currentPlayer.getStatistics()
-                .getHitDistributionPerSlice();
+            .getHitDistributionPerSlice();
 
         boolean allSegmentsClosed = ALL_VALID_SEGMENTS.stream()
-                .map(p -> hitDistributionPerSlice.getOrDefault(p, 0) >= 3)
-                .reduce(Boolean::logicalAnd)
-                .orElse(false);
+            .map(p -> hitDistributionPerSlice.getOrDefault(p, 0) >= 3)
+            .reduce(Boolean::logicalAnd)
+            .orElse(false);
 
         boolean isLeader = currentPlayer.equals(leader());
 
@@ -54,7 +54,7 @@ public class CricketGame extends Game {
         }
 
         int hitsPerSlice = game.determineCurrentPlayer().getStatistics()
-                .getHitDistributionPerSlice().getOrDefault(points, 0);
+            .getHitDistributionPerSlice().getOrDefault(points, 0);
 
         if (hitsPerSlice <= 3) {
             return 0;
@@ -62,12 +62,12 @@ public class CricketGame extends Game {
 
         List<Player> players = game.getPlayers();
         boolean sliceOpen = players.stream()
-                .filter(Predicate.not(game.determineCurrentPlayer()::equals))
-                .map(Player::getStatistics)
-                .map(Player.Statistics::getHitDistributionPerSlice)
-                .map(h -> h.getOrDefault(points, 0) < 3)
-                .reduce(Boolean::logicalAnd)
-                .orElse(false);
+            .filter(Predicate.not(game.determineCurrentPlayer()::equals))
+            .map(Player::getStatistics)
+            .map(Player.Statistics::getHitDistributionPerSlice)
+            .map(h -> h.getOrDefault(points, 0) < 3)
+            .reduce(Boolean::logicalAnd)
+            .orElse(false);
 
         if (!sliceOpen) {
             return 0;

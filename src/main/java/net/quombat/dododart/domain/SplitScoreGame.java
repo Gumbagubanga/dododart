@@ -7,9 +7,9 @@ import java.util.Set;
 public class SplitScoreGame extends Game {
 
     private static final List<Set<ScoreSegment>> hitOrder = List.of(
-            ScoreSegment.fifteens, ScoreSegment.sixteens, ScoreSegment.doubles,
-            ScoreSegment.seventeens, ScoreSegment.eighteens, ScoreSegment.triples,
-            ScoreSegment.nineteens, ScoreSegment.twenties, ScoreSegment.bulls
+        ScoreSegment.fifteens, ScoreSegment.sixteens, ScoreSegment.doubles,
+        ScoreSegment.seventeens, ScoreSegment.eighteens, ScoreSegment.triples,
+        ScoreSegment.nineteens, ScoreSegment.twenties, ScoreSegment.bulls
     );
 
     @Override
@@ -34,9 +34,9 @@ public class SplitScoreGame extends Game {
         Set<ScoreSegment> dartSegments = hitOrder.get(round - 1);
 
         int sum = getHits().stream()
-                .filter(dartSegments::contains)
-                .map(ScoreSegment::getScore)
-                .reduce(0, Integer::sum);
+            .filter(dartSegments::contains)
+            .map(ScoreSegment::getScore)
+            .reduce(0, Integer::sum);
 
         int score = getCurrentPlayerOldScore();
         if (isTurnOver()) {

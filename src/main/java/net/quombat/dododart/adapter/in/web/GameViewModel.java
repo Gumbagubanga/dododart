@@ -91,14 +91,14 @@ record GameViewModel(String gameMode, String round, List<PlayerViewModel> player
     private static StringBuilder cricket(Game game) {
         List<Integer> integers = List.of(20, 19, 18, 17, 16, 15, 25);
         String header = integers.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(" | ", "", "<br>"));
+            .map(Object::toString)
+            .collect(Collectors.joining(" | ", "", "<br>"));
 
         StringBuilder result = new StringBuilder(header);
         for (Player player : game.getPlayers()) {
             String collect = integers.stream()
-                    .map(p -> "%02d".formatted(Math.min(3, player.getStatistics().getHitDistributionPerSlice().getOrDefault(p, 0))))
-                    .collect(Collectors.joining(" | ", "", "<br>"));
+                .map(p -> "%02d".formatted(Math.min(3, player.getStatistics().getHitDistributionPerSlice().getOrDefault(p, 0))))
+                .collect(Collectors.joining(" | ", "", "<br>"));
             result.append(collect);
         }
         return result;
@@ -137,7 +137,7 @@ record GameViewModel(String gameMode, String round, List<PlayerViewModel> player
 
     static List<PlayerViewModel> players(Game game) {
         return game.getPlayers().stream().map(p -> PlayerViewModel.create(p, game.getCurrentPlayerId()))
-                .toList();
+            .toList();
     }
 
     private static List<String> renderMessages(Game game) {

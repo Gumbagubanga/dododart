@@ -82,16 +82,16 @@ public enum ScoreSegment {
     private final int multiplier;
 
     public static final Set<ScoreSegment> doubles = Set.of(
-            DOUBLE_01, DOUBLE_02, DOUBLE_03, DOUBLE_04, DOUBLE_05,
-            DOUBLE_06, DOUBLE_07, DOUBLE_08, DOUBLE_09, DOUBLE_10,
-            DOUBLE_11, DOUBLE_12, DOUBLE_13, DOUBLE_14, DOUBLE_15,
-            DOUBLE_16, DOUBLE_17, DOUBLE_18, DOUBLE_19, DOUBLE_20);
+        DOUBLE_01, DOUBLE_02, DOUBLE_03, DOUBLE_04, DOUBLE_05,
+        DOUBLE_06, DOUBLE_07, DOUBLE_08, DOUBLE_09, DOUBLE_10,
+        DOUBLE_11, DOUBLE_12, DOUBLE_13, DOUBLE_14, DOUBLE_15,
+        DOUBLE_16, DOUBLE_17, DOUBLE_18, DOUBLE_19, DOUBLE_20);
 
     public static final Set<ScoreSegment> triples = Set.of(
-            TRIPLE_01, TRIPLE_02, TRIPLE_03, TRIPLE_04, TRIPLE_05,
-            TRIPLE_06, TRIPLE_07, TRIPLE_08, TRIPLE_09, TRIPLE_10,
-            TRIPLE_11, TRIPLE_12, TRIPLE_13, TRIPLE_14, TRIPLE_15,
-            TRIPLE_16, TRIPLE_17, TRIPLE_18, TRIPLE_19, TRIPLE_20);
+        TRIPLE_01, TRIPLE_02, TRIPLE_03, TRIPLE_04, TRIPLE_05,
+        TRIPLE_06, TRIPLE_07, TRIPLE_08, TRIPLE_09, TRIPLE_10,
+        TRIPLE_11, TRIPLE_12, TRIPLE_13, TRIPLE_14, TRIPLE_15,
+        TRIPLE_16, TRIPLE_17, TRIPLE_18, TRIPLE_19, TRIPLE_20);
 
     public static final Set<ScoreSegment> bulls = Set.of(SINGLE_BULL, DOUBLE_BULL);
 
@@ -108,17 +108,17 @@ public enum ScoreSegment {
     public static final Set<ScoreSegment> fifteens = Set.of(SINGLE_15, DOUBLE_15, TRIPLE_15);
 
     public static final Set<ScoreSegment> highs = Stream.of(bulls,
-            twenties, nineteens, eighteens,
-            seventeens, sixteens, fifteens).flatMap(Collection::stream).collect(Collectors.toSet());
+        twenties, nineteens, eighteens,
+        seventeens, sixteens, fifteens).flatMap(Collection::stream).collect(Collectors.toSet());
 
     public static ScoreSegment from(int value) {
         int multiplier = value / 100;
         int score = value % 100;
 
         return Arrays.stream(values())
-                .filter(s -> s.points == score && s.multiplier == multiplier)
-                .findFirst()
-                .orElseThrow();
+            .filter(s -> s.points == score && s.multiplier == multiplier)
+            .findFirst()
+            .orElseThrow();
     }
 
     public int getScore() {

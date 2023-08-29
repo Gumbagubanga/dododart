@@ -35,10 +35,10 @@ public class EliminationGame extends Game {
 
     private void checkElimination(Player currentPlayer, int preliminaryScore) {
         Optional<Player> otherPlayerWithSameScore = getPlayers().stream()
-                .filter(Predicate.not(currentPlayer::equals))
-                .filter(p -> p.getScore() != 0)
-                .filter(p -> p.getScore() == preliminaryScore)
-                .findAny();
+            .filter(Predicate.not(currentPlayer::equals))
+            .filter(p -> p.getScore() != 0)
+            .filter(p -> p.getScore() == preliminaryScore)
+            .findAny();
 
         otherPlayerWithSameScore.ifPresent(p -> elimination(p, currentPlayer));
     }

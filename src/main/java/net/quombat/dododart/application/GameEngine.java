@@ -28,8 +28,8 @@ public class GameEngine {
         int noOfPlayers = command.noOfPlayers();
 
         List<Player> players = IntStream.rangeClosed(1, noOfPlayers).boxed()
-                .map(playerNo -> new Player(playerNo, game.startScore()))
-                .collect(Collectors.toList());
+            .map(playerNo -> new Player(playerNo, game.startScore()))
+            .collect(Collectors.toList());
 
         game.start(players);
         persistencePort.save(game);
