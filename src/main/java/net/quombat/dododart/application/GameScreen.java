@@ -1,11 +1,16 @@
 package net.quombat.dododart.application;
 
-import net.quombat.dododart.domain.CricketGame;
+import net.quombat.dododart.domain.DomainEvent;
 import net.quombat.dododart.domain.Game;
-import net.quombat.dododart.domain.MiniminationGame;
 import net.quombat.dododart.domain.Player;
 import net.quombat.dododart.domain.ScoreSegment;
-import net.quombat.dododart.domain.SplitScoreGame;
+import net.quombat.dododart.domain.events.BustEvent;
+import net.quombat.dododart.domain.events.GameOverEvent;
+import net.quombat.dododart.domain.events.GameStartedEvent;
+import net.quombat.dododart.domain.events.PlayerEliminatedEvent;
+import net.quombat.dododart.domain.rules.CricketGame;
+import net.quombat.dododart.domain.rules.MiniminationGame;
+import net.quombat.dododart.domain.rules.SplitScoreGame;
 
 import org.springframework.web.servlet.ModelAndView;
 

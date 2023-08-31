@@ -4,8 +4,8 @@ import net.quombat.dododart.adapter.out.persistence.TestMemoryAdapter;
 import net.quombat.dododart.application.GameEngine.CreateNewGameCommand;
 import net.quombat.dododart.application.ports.out.BoardPort;
 import net.quombat.dododart.application.ports.out.GamePersistencePort;
-import net.quombat.dododart.domain.CricketGame;
 import net.quombat.dododart.domain.ScoreSegment;
+import net.quombat.dododart.domain.rules.CricketGame;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

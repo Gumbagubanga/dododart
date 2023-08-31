@@ -2,12 +2,12 @@ package net.quombat.dododart.adapter.in.web;
 
 import net.quombat.dododart.application.GameEngine;
 import net.quombat.dododart.application.GameEngine.CreateNewGameCommand;
-import net.quombat.dododart.domain.CricketGame;
-import net.quombat.dododart.domain.EliminationGame;
 import net.quombat.dododart.domain.Game;
-import net.quombat.dododart.domain.MiniminationGame;
-import net.quombat.dododart.domain.SplitScoreGame;
-import net.quombat.dododart.domain.X01Game;
+import net.quombat.dododart.domain.rules.CricketGame;
+import net.quombat.dododart.domain.rules.EliminationGame;
+import net.quombat.dododart.domain.rules.MiniminationGame;
+import net.quombat.dododart.domain.rules.SplitScoreGame;
+import net.quombat.dododart.domain.rules.X01Game;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

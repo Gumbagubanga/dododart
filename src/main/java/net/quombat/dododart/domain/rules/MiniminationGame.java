@@ -1,16 +1,21 @@
-package net.quombat.dododart.domain;
+package net.quombat.dododart.domain.rules;
+
+import net.quombat.dododart.domain.Game;
+import net.quombat.dododart.domain.Player;
+import net.quombat.dododart.domain.ScoreSegment;
+import net.quombat.dododart.domain.events.PlayerEliminatedEvent;
 
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class EliminationGame extends Game {
+public class MiniminationGame extends Game {
 
-    private static final int targetScore = 301;
+    private static final int targetScore = 101;
 
     @Override
     public String name() {
-        return "%d Elimination".formatted(targetScore);
+        return "%d Minimination".formatted(targetScore);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class EliminationGame extends Game {
     }
 
     private int dartsSum() {
-        return getHits().stream().map(ScoreSegment::getScore).reduce(0, Integer::sum);
+        return getHits().stream().map(ScoreSegment::getPoints).reduce(0, Integer::sum);
     }
 
     @Override
@@ -66,5 +71,4 @@ public class EliminationGame extends Game {
     public int maxRounds() {
         return 10;
     }
-
 }

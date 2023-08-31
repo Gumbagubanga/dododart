@@ -1,4 +1,8 @@
-package net.quombat.dododart.domain;
+package net.quombat.dododart.domain.rules;
+
+import net.quombat.dododart.domain.Game;
+import net.quombat.dododart.domain.Player;
+import net.quombat.dododart.domain.ScoreSegment;
 
 import java.util.Comparator;
 
