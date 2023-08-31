@@ -1,17 +1,19 @@
 package net.quombat.dododart.application;
 
-import lombok.RequiredArgsConstructor;
 import net.quombat.dododart.application.ports.out.BoardPort;
 import net.quombat.dododart.application.ports.out.GamePersistencePort;
 import net.quombat.dododart.application.ports.out.RenderPort;
 import net.quombat.dododart.domain.Game;
 import net.quombat.dododart.domain.Player;
 import net.quombat.dododart.domain.ScoreSegment;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +34,7 @@ public class GameEngine {
         game.start(players);
         persistencePort.save(game);
         boardPort.stopButtonBlink();
-        renderPort.render(List.copyOf(game.getDomainEvents()));
-        game.getDomainEvents().clear();
+        renderPort.render();
     }
 
     public void hit(ScoreSegment segment) {
@@ -46,8 +47,7 @@ public class GameEngine {
         if (game.isSwitchPlayerState()) {
             boardPort.startButtonBlink();
         }
-        renderPort.render(List.copyOf(game.getDomainEvents()));
-        game.getDomainEvents().clear();
+        renderPort.render();
     }
 
     public void buttonPressed() {
@@ -58,8 +58,7 @@ public class GameEngine {
 
         game.nextPlayer();
         boardPort.stopButtonBlink();
-        renderPort.render(List.copyOf(game.getDomainEvents()));
-        game.getDomainEvents().clear();
+        renderPort.render();
     }
 
     public Screen getScreen() {
