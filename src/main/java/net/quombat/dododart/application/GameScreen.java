@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,8 @@ public class GameScreen implements Screen {
     public record GameViewModel(String gameMode, String round, List<PlayerViewModel> players,
                                 String playerName, String currentScore, String currentPointsPerDart,
                                 String currentPointsPerRound, String firstDart, String secondDart,
-                                String thirdDart, String dartsSum, List<String> renderMessages) {
+                                String thirdDart, String dartsSum, List<String> renderMessages,
+                                String sounds) {
         static GameViewModel create(Game game) {
             if (game == null) {
                 return null;
@@ -55,8 +57,11 @@ public class GameScreen implements Screen {
             String thirdDart = thirdDart(game).map(GameViewModel::renderSegment).orElse("");
             String dartsSum = dartsSum(game);
             List<String> messages = renderMessages(game);
+            String sounds = sounds(game.getDomainEvents());
 
-            return new GameViewModel(gameMode, round, players, playerName, currentPlayerScore, currentPointsPerDart, currentPointsPerRound, firstDart, secondDart, thirdDart, dartsSum, messages);
+            return new GameViewModel(gameMode, round, players, playerName,
+                currentPlayerScore, currentPointsPerDart, currentPointsPerRound,
+                firstDart, secondDart, thirdDart, dartsSum, messages, sounds);
         }
 
         public static String dartsSum(Game game) {
@@ -176,6 +181,31 @@ public class GameScreen implements Screen {
                 messages.add("Drücken Sie die Taste um fortzufahren");
             }
             return messages;
+        }
+
+        private static String sounds(List<DomainEvent> domainEvents) {
+            ArrayList<String> sounds = new ArrayList<>();
+
+            for (DomainEvent domainEvent : domainEvents) {
+                if (domainEvent instanceof GameStartedEvent) {
+                    sounds.add("sprite-2-Letsplay");
+                } else if (domainEvent instanceof BustEvent) {
+                    sounds.add("sprite-STUPID");
+                } else if (domainEvent instanceof PlayerEliminatedEvent) {
+                    Random rand = new Random();
+
+                    List<String> samples = List.of("BYEBYE", "DRAGONPUNCH", "FATALITY", "FLAWLESS",
+                        "ILLGETYOU", "JUSTYOUWAIT", "LAUGH", "OHDEAR",
+                        "PERFECT", "RUNAWAY", "STUPID", "TRAITOR", "UH-OH", "YOULLREGRETTHAT",
+                        "WHATTHE");
+
+                    sounds.add("sprite-" + samples.get(rand.nextInt(samples.size())));
+                } else if (domainEvent instanceof GameOverEvent) {
+                    sounds.add("sprite-2-Win");
+                }
+            }
+
+            return String.join(" ", sounds);
         }
 
         public record PlayerViewModel(int id, String name, int score, boolean active) {

@@ -16,7 +16,7 @@ import lombok.Getter;
 @Getter
 public abstract class Game {
 
-    private final List<? super DomainEvent> domainEvents = new ArrayList<>();
+    private final List<DomainEvent> domainEvents = new ArrayList<>();
 
     private List<Player> players;
 
@@ -58,6 +58,7 @@ public abstract class Game {
         Objects.requireNonNull(players);
 
         this.players = players;
+        domainEvents.add(new GameStartedEvent());
     }
 
     public void hit(ScoreSegment segment) {

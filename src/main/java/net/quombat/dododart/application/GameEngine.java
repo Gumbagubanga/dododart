@@ -54,6 +54,7 @@ public class GameEngine {
             return;
         }
 
+        game.getDomainEvents().clear();
         game.hit(segment);
         if (game.isSwitchPlayerState()) {
             boardPort.startButtonBlink();
@@ -68,6 +69,7 @@ public class GameEngine {
             return;
         }
 
+        game.getDomainEvents().clear();
         game.nextPlayer();
         boardPort.stopButtonBlink();
         backToTitleScreen(game);
