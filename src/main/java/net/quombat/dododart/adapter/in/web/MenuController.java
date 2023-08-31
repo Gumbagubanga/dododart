@@ -1,10 +1,14 @@
 package net.quombat.dododart.adapter.in.web;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.quombat.dododart.application.GameEngine;
-import net.quombat.dododart.domain.*;
+import net.quombat.dododart.application.GameEngine.CreateNewGameCommand;
+import net.quombat.dododart.domain.CricketGame;
+import net.quombat.dododart.domain.EliminationGame;
+import net.quombat.dododart.domain.Game;
+import net.quombat.dododart.domain.MiniminationGame;
+import net.quombat.dododart.domain.SplitScoreGame;
+import net.quombat.dododart.domain.X01Game;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +16,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +37,7 @@ class MenuController {
     @ResponseBody
     @PostMapping(headers = "HX-Request", produces = MediaType.APPLICATION_JSON_VALUE)
     public void createNewGame(@ModelAttribute InputModel inputModel) {
-        GameEngine.CreateNewGameCommand command = new GameEngine.CreateNewGameCommand(inputModel.getNoOfPlayers(), inputModel.getRules());
+        CreateNewGameCommand command = new CreateNewGameCommand(inputModel.getNoOfPlayers(), inputModel.getRules());
         gameEngine.createNewGame(command);
     }
 

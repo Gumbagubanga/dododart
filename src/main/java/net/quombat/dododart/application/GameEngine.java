@@ -10,9 +10,13 @@ import net.quombat.dododart.domain.ScoreSegment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,6 +27,11 @@ public class GameEngine {
     private final BoardPort boardPort;
     private final RenderPort renderPort;
 
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+    @Getter
+    private Screen activeScreen = new TitleScreen();
+
     public void createNewGame(CreateNewGameCommand command) {
         Game game = command.rules();
         int noOfPlayers = command.noOfPlayers();
@@ -32,6 +41,8 @@ public class GameEngine {
             .collect(Collectors.toList());
 
         game.start(players);
+
+        activeScreen = new GameScreen(game);
         persistencePort.save(game);
         boardPort.stopButtonBlink();
         renderPort.render();
@@ -47,6 +58,7 @@ public class GameEngine {
         if (game.isSwitchPlayerState()) {
             boardPort.startButtonBlink();
         }
+        backToTitleScreen(game);
         renderPort.render();
     }
 
@@ -58,17 +70,18 @@ public class GameEngine {
 
         game.nextPlayer();
         boardPort.stopButtonBlink();
+        backToTitleScreen(game);
         renderPort.render();
     }
 
-    public Screen getScreen() {
-        Game game = persistencePort.fetch();
-
-        if (game == null) {
-            return new TitleScreen();
+    private void backToTitleScreen(Game game) {
+        if (game.isGameOver()) {
+            executor.schedule(() -> {
+                activeScreen = new TitleScreen();
+                persistencePort.save(null);
+                renderPort.render();
+            }, 10L, TimeUnit.SECONDS);
         }
-
-        return new GameScreen(game);
     }
 
     public record CreateNewGameCommand(int noOfPlayers, Game rules) {
