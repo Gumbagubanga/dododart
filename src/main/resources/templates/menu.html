@@ -55,46 +55,23 @@
                                 <span class="mdc-notched-outline__trailing"></span>
                             </span>
                             <span class="mdc-select__selected-text-container">
-                                <span id="demo-selected-text"
-                                      class="mdc-select__selected-text">501</span>
+                                <span class="mdc-select__selected-text"
+                                      th:text="${inputModel.games[0].value}">501</span>
                             </span>
                         </div>
                         <div
                             class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
                             <ul class="mdc-deprecated-list" role="listbox"
                                 aria-label="Game picker listbox">
-                                <li class="mdc-deprecated-list-item mdc-deprecated-list-item--selected"
-                                    aria-selected="false"
-                                    data-value="x01"
+                                <li th:each="game,stat : ${inputModel.games}"
+                                    class="mdc-deprecated-list-item"
+                                    th:classappend="${stat.first}? 'mdc-deprecated-list-item--selected'"
+                                    th:attr="aria-selected=${stat.first}? 'true'"
+                                    th:data-value="${game.value}"
                                     role="option">
                                     <span class="mdc-deprecated-list-item__ripple"></span>
-                                    <span class="mdc-deprecated-list-item__text">501</span>
-                                </li>
-                                <li class="mdc-deprecated-list-item" aria-selected="false"
-                                    data-value="elimination"
-                                    role="option">
-                                    <span class="mdc-deprecated-list-item__ripple"></span>
-                                    <span
-                                        class="mdc-deprecated-list-item__text">301 Elimination</span>
-                                </li>
-                                <li class="mdc-deprecated-list-item" aria-selected="false"
-                                    data-value="minimination"
-                                    role="option">
-                                    <span class="mdc-deprecated-list-item__ripple"></span>
-                                    <span
-                                        class="mdc-deprecated-list-item__text">101 Minimination</span>
-                                </li>
-                                <li class="mdc-deprecated-list-item" aria-selected="false"
-                                    data-value="splitscore"
-                                    role="option">
-                                    <span class="mdc-deprecated-list-item__ripple"></span>
-                                    <span class="mdc-deprecated-list-item__text">Split Score</span>
-                                </li>
-                                <li class="mdc-deprecated-list-item" aria-selected="false"
-                                    data-value="cricket"
-                                    role="option">
-                                    <span class="mdc-deprecated-list-item__ripple"></span>
-                                    <span class="mdc-deprecated-list-item__text">Cricket</span>
+                                    <span class="mdc-deprecated-list-item__text"
+                                          th:text="${game.name}">501</span>
                                 </li>
                             </ul>
                         </div>
