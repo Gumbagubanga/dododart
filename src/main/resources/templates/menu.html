@@ -28,6 +28,7 @@
             <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
                      role="toolbar">
                 <a class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+                   th:style="${not #arrays.contains(@environment.getActiveProfiles(),'debug')}? 'display:none'"
                    th:href="@{debug}"
                    aria-label="Debug">bug_report
                 </a>
