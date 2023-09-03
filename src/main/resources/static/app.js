@@ -8,7 +8,7 @@ dodo = (function (root) {
                 root.sound.volume(0.75);
             }
         };
-        xmlhttp.open("GET", "./dodoaudio.json", false);
+        xmlhttp.open("GET", "./dodoaudio.json");
         xmlhttp.send();
     }
 
@@ -30,8 +30,6 @@ dodo = (function (root) {
             .map(c => c.slice(7))
             .filter(c => c.endsWith('-loop'))
             .map(c => c.slice(0, -5))[0];
-
-        console.log(`>>> '${loop}' | '${gameLoopId}' | '${gameLoop}'`);
 
         if (gameLoop !== loop) {
             if (gameLoopId !== undefined) {
