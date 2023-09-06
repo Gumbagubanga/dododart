@@ -1,12 +1,15 @@
 package net.quombat.dododart.adapter.in.web;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.quombat.dododart.application.GameEngine;
 import net.quombat.dododart.application.GameEngine.CreateNewGameCommand;
 import net.quombat.dododart.domain.Game;
-import net.quombat.dododart.domain.rules.*;
+import net.quombat.dododart.domain.rules.CricketGame;
+import net.quombat.dododart.domain.rules.EliminationGame;
+import net.quombat.dododart.domain.rules.HighscoreGame;
+import net.quombat.dododart.domain.rules.MiniminationGame;
+import net.quombat.dododart.domain.rules.SplitScoreGame;
+import net.quombat.dododart.domain.rules.X01Game;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +21,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.function.Supplier;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -25,7 +32,7 @@ class MenuController {
 
     private final GameEngine gameEngine;
 
-    @GetMapping("/menu")
+    @GetMapping("/")
     public String menu(Model model) {
         model.addAttribute("inputModel", new InputModel());
         return "menu";

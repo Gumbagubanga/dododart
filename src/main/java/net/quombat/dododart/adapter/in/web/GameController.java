@@ -19,9 +19,9 @@ class GameController {
     private final GameEngine gameEngine;
     private final SseDriver sseDriver;
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
+    @GetMapping("/board")
+    public String board() {
+        return "board";
     }
 
     @GetMapping("/register")
