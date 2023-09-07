@@ -42,40 +42,45 @@ class SerialPortDriver implements SerialPortInterface {
 
     @PostConstruct
     void setup() {
-        SerialPort serialPort = null;
-        if (portDescriptor != null) {
-            log.info("Connecting to port descriptor '{}'", portDescriptor);
-            serialPort = SerialPort.getCommPort(portDescriptor);
-            boolean success = serialPort.openPort();
-            if (success) {
-                log.info("Serial connection successfully established");
-                serialPort.addDataListener(new AbstractSerialPortMessageListener() {
-
-                    @SneakyThrows
-                    @Override
-                    public void serialEvent(SerialPortEvent event) {
-                        String json = new String(event.getReceivedData());
-                        log.debug("Serial Event: {}", json);
-
-                        DartBoardDatagram boardDatagram = gson.fromJson(json, DartBoardDatagram.class);
-
-                        if (boardDatagram.isButtonPressed()) {
-                            publisher.publishEvent(new ButtonPressedEvent());
-                        } else {
-                            ScoreSegment segment = ScoreSegment.from(boardDatagram.getDart());
-                            publisher.publishEvent(new DartHitEvent(segment));
-                        }
-                    }
-                });
-            } else {
-                String portDescriptors = Arrays.stream(SerialPort.getCommPorts())
-                    .map(SerialPort::getPortDescription)
-                    .collect(Collectors.joining(", "));
-                log.error("Serial connection failed. Available ports: {}", portDescriptors);
-            }
+        if (portDescriptor == null) {
+            this.serialPort = null;
+            return;
         }
 
+        log.info("Connecting to port descriptor '{}'", portDescriptor);
+        SerialPort serialPort = SerialPort.getCommPort(portDescriptor);
+        if (serialPort.openPort()) {
+            log.info("Serial connection successfully established");
+            serialPort.addDataListener(getListener());
+        } else {
+            String portDescriptors = Arrays.stream(SerialPort.getCommPorts())
+                .map(SerialPort::getPortDescription)
+                .collect(Collectors.joining(", "));
+            log.error("Serial connection failed. Available ports: {}", portDescriptors);
+        }
         this.serialPort = serialPort;
+
+    }
+
+    private AbstractSerialPortMessageListener getListener() {
+        return new AbstractSerialPortMessageListener() {
+
+            @SneakyThrows
+            @Override
+            public void serialEvent(SerialPortEvent event) {
+                String json = new String(event.getReceivedData());
+                log.debug("Serial Event: {}", json);
+
+                DartBoardDatagram boardDatagram = gson.fromJson(json, DartBoardDatagram.class);
+
+                if (boardDatagram.isButtonPressed()) {
+                    publisher.publishEvent(new ButtonPressedEvent());
+                } else {
+                    ScoreSegment segment = ScoreSegment.from(boardDatagram.getDart());
+                    publisher.publishEvent(new DartHitEvent(segment));
+                }
+            }
+        };
     }
 
     @PreDestroy
