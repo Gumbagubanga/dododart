@@ -14,6 +14,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -42,26 +44,35 @@ class SerialPortDriver implements SerialPortInterface {
     void setup() {
         SerialPort serialPort = null;
         if (portDescriptor != null) {
+            log.info("Connecting to port descriptor '{}'", portDescriptor);
             serialPort = SerialPort.getCommPort(portDescriptor);
-            serialPort.openPort();
-            serialPort.addDataListener(new AbstractSerialPortMessageListener() {
+            boolean success = serialPort.openPort();
+            if (success) {
+                log.info("Serial connection successfully established");
+                serialPort.addDataListener(new AbstractSerialPortMessageListener() {
 
-                @SneakyThrows
-                @Override
-                public void serialEvent(SerialPortEvent event) {
-                    String json = new String(event.getReceivedData());
-                    log.debug("Serial Event: {}", json);
+                    @SneakyThrows
+                    @Override
+                    public void serialEvent(SerialPortEvent event) {
+                        String json = new String(event.getReceivedData());
+                        log.debug("Serial Event: {}", json);
 
-                    DartBoardDatagram boardDatagram = gson.fromJson(json, DartBoardDatagram.class);
+                        DartBoardDatagram boardDatagram = gson.fromJson(json, DartBoardDatagram.class);
 
-                    if (boardDatagram.isButtonPressed()) {
-                        publisher.publishEvent(new ButtonPressedEvent());
-                    } else {
-                        ScoreSegment segment = ScoreSegment.from(boardDatagram.getDart());
-                        publisher.publishEvent(new DartHitEvent(segment));
+                        if (boardDatagram.isButtonPressed()) {
+                            publisher.publishEvent(new ButtonPressedEvent());
+                        } else {
+                            ScoreSegment segment = ScoreSegment.from(boardDatagram.getDart());
+                            publisher.publishEvent(new DartHitEvent(segment));
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                String portDescriptors = Arrays.stream(SerialPort.getCommPorts())
+                    .map(SerialPort::getPortDescription)
+                    .collect(Collectors.joining(", "));
+                log.error("Serial connection failed. Available ports: {}", portDescriptors);
+            }
         }
 
         this.serialPort = serialPort;
