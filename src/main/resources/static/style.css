@@ -5,11 +5,33 @@
 body, body::backdrop, body:fullscreen {
     font-family: 'Roboto', sans-serif;
     color: white;
-    background: url('bg.jpg') no-repeat;
+}
+
+body:after {
+    content: "";
+    position: fixed; /* stretch a fixed position to the whole screen */
+    top: 0;
+    height: 100dvh; /* fix for mobile browser address bar appearing disappearing */
+    left: 0;
+    right: 0;
+    z-index: -1; /* needed to keep in the background */
+    background: url('bg.jpg') no-repeat center;
     background-size: cover;
 }
 
-#score-wrapper {
+#title-screen {
+    color: white;
+    text-shadow: 6px 4px 1px #b6c0cfd1;
+}
+
+#title-screen .subtitle {
+    font-weight: 200;
+    font-size: 3rem;
+    margin-top: 0.5em;
+    text-align: center;
+}
+
+#title-screen, #game-screen, #menu-screen {
     padding: 12px;
 
     display: grid;
@@ -21,11 +43,18 @@ body, body::backdrop, body:fullscreen {
     grid-row-gap: 0;
 }
 
-/*
-#score-wrapper > div {
-    outline: 1px solid red;
+#menu-screen {
+    height: 100dvh;
+    color: white;
 }
-*/
+
+#menu-screen form {
+    font-size: 12pt;
+}
+
+#menu-screen form label {
+    display: block;
+}
 
 .center {
     grid-area: 1 / 1 / 9 / 5;
@@ -94,8 +123,8 @@ body, body::backdrop, body:fullscreen {
 }
 
 .currentScore {
-    grid-area: 3 / 2 / 7 / 5;
-    place-self: center;
+    grid-area: 5 / 2 / 7 / 4;
+    text-align: center;
     font-size: 11ch;
     font-weight: bold;
 }

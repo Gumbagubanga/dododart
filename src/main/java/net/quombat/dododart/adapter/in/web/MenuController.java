@@ -39,6 +39,12 @@ class MenuController {
     }
 
     @ResponseBody
+    @PostMapping(path = "/title", headers = "HX-Request", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void title() {
+        gameEngine.switchToTitle();
+    }
+
+    @ResponseBody
     @PostMapping(headers = "HX-Request", produces = MediaType.APPLICATION_JSON_VALUE)
     public void createNewGame(@ModelAttribute InputModel inputModel) {
         CreateNewGameCommand command = new CreateNewGameCommand(inputModel.getNoOfPlayers(), inputModel.getRules());

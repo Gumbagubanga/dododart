@@ -174,11 +174,10 @@ public class GameScreen implements Screen {
                 messages.add("SPIELER %d".formatted(winner.getId()));
             } else if (game.isBust()) {
                 messages.add("Überworfen!");
-                messages.add("Nächster Spieler");
-                messages.add("Drücken Sie die Taste um fortzufahren");
+                messages.add("Zum Fortfahren Knopf drücken");
             } else if (game.isTurnOver()) {
                 messages.add("Nächster Spieler");
-                messages.add("Drücken Sie die Taste um fortzufahren");
+                messages.add("Zum Fortfahren Knopf drücken");
             }
             return messages;
         }
