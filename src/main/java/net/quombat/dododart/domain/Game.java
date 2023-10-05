@@ -7,7 +7,7 @@ import net.quombat.dododart.domain.events.HighTripleHitEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import lombok.AccessLevel;
@@ -44,20 +44,20 @@ public abstract class Game {
 
     public abstract boolean isBust();
 
-    public abstract boolean isWinner();
+    protected abstract boolean isWinner();
 
-    public abstract int calculateScore();
+    protected abstract int calculateScore();
 
-    public abstract int startScore();
+    protected abstract int startScore();
 
-    public abstract Player leader();
+    protected abstract Player leader();
 
-    public abstract int maxRounds();
+    protected abstract int maxRounds();
 
-    public void start(List<Player> players) {
-        Objects.requireNonNull(players);
-
-        this.players = players;
+    public void start(int noOfPlayers) {
+        this.players = IntStream.rangeClosed(1, noOfPlayers).boxed()
+            .map(playerNo -> new Player(playerNo, this.startScore()))
+            .collect(Collectors.toList());
         domainEvents.add(new GameStartedEvent());
     }
 
