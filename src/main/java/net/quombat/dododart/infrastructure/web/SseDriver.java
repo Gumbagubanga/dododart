@@ -3,17 +3,17 @@ package net.quombat.dododart.infrastructure.web;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class SseDriver {
 
-    private final List<SseEmitter> sseEmitters = new ArrayList<>();
+    private final List<SseEmitter> sseEmitters = new CopyOnWriteArrayList<>();
 
     public SseEmitter registerSseEmitter() {
         for (SseEmitter sseEmitter : sseEmitters) {
@@ -36,9 +36,11 @@ public class SseDriver {
         sseEmitters.forEach(s -> getSend(s, object));
     }
 
-    @SneakyThrows
-    private static void getSend(SseEmitter sseEmitter, String json) {
-        sseEmitter.send(json);
+    private void getSend(SseEmitter sseEmitter, String json) {
+        try {
+            sseEmitter.send(json);
+        } catch (IOException e) {
+            sseEmitters.remove(sseEmitter);
+        }
     }
-
 }
