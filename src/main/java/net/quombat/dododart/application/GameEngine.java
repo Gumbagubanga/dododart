@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -28,6 +29,7 @@ public class GameEngine {
     private final RenderPort renderPort;
 
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> schedule;
 
     @Getter
     private Screen activeScreen = new TitleScreen();
@@ -45,6 +47,7 @@ public class GameEngine {
         activeScreen = new GameScreen(game);
         persistencePort.save(game);
         boardPort.stopButtonBlink();
+        backToTitleScreen(game);
         renderPort.render();
     }
 
@@ -76,13 +79,25 @@ public class GameEngine {
         renderPort.render();
     }
 
+    public void switchToTitle() {
+        if (schedule != null && !schedule.isDone()) {
+            schedule.cancel(false);
+        }
+
+        activeScreen = new TitleScreen();
+        persistencePort.save(null);
+        renderPort.render();
+    }
+
     private void backToTitleScreen(Game game) {
+        if (schedule != null && !schedule.isDone()) {
+            schedule.cancel(false);
+        }
+
         if (game.isGameOver()) {
-            executor.schedule(() -> {
-                activeScreen = new TitleScreen();
-                persistencePort.save(null);
-                renderPort.render();
-            }, 10L, TimeUnit.SECONDS);
+            schedule = executor.schedule(this::switchToTitle, 15L, TimeUnit.SECONDS);
+        } else {
+            schedule = executor.schedule(this::switchToTitle, 5L, TimeUnit.MINUTES);
         }
     }
 
