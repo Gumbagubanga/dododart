@@ -4,7 +4,6 @@ import net.quombat.dododart.domain.DomainEvent;
 import net.quombat.dododart.domain.Game;
 import net.quombat.dododart.domain.Player;
 import net.quombat.dododart.domain.ScoreSegment;
-import net.quombat.dododart.domain.events.BustEvent;
 import net.quombat.dododart.domain.events.GameOverEvent;
 import net.quombat.dododart.domain.events.GameStartedEvent;
 import net.quombat.dododart.domain.events.PlayerEliminatedEvent;
@@ -187,20 +186,15 @@ public class GameScreen implements Screen {
 
             for (DomainEvent domainEvent : domainEvents) {
                 if (domainEvent instanceof GameStartedEvent) {
-                    sounds.add("sprite-2-Letsplay");
-                } else if (domainEvent instanceof BustEvent) {
-                    sounds.add("sprite-STUPID");
+                    sounds.add("sprite-announcer-prepare");
                 } else if (domainEvent instanceof PlayerEliminatedEvent) {
                     Random rand = new Random();
 
-                    List<String> samples = List.of("BYEBYE", "DRAGONPUNCH", "FATALITY", "FLAWLESS",
-                        "ILLGETYOU", "JUSTYOUWAIT", "LAUGH", "OHDEAR",
-                        "PERFECT", "RUNAWAY", "STUPID", "TRAITOR", "UH-OH", "YOULLREGRETTHAT",
-                        "WHATTHE");
+                    List<String> samples = List.of("announcer-headshot");
 
                     sounds.add("sprite-" + samples.get(rand.nextInt(samples.size())));
                 } else if (domainEvent instanceof GameOverEvent) {
-                    sounds.add("sprite-2-Win");
+                    sounds.add("sprite-announcer-winner");
                 }
             }
 
