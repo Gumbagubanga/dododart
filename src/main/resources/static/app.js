@@ -56,14 +56,17 @@ dodo = (function (root) {
             .filter(c => !c.endsWith('-loop'))
             .map(c => c.slice(7))
 
-        if (sounds.length > 0 && gameLoopId !== undefined) {
-            window.sound.volume(0.2, gameLoopId);
+        if (sounds.length > 0) {
+            if (gameLoopId !== undefined) {
+                window.sound.volume(0.2, gameLoopId);
+            }
             sounds.forEach(s => {
                 let sound = window.sound.play(s);
-                window.sound.once('end', function () {
-                    window.sound.volume(0.5, gameLoopId);
-                    ;
-                }, sound);
+                if (gameLoopId !== undefined) {
+                    window.sound.once('end', function () {
+                        window.sound.volume(0.5, gameLoopId);
+                    }, sound);
+                }
             });
         }
 
